@@ -1,5 +1,5 @@
 # Imagemagick servlet example 
-Super simple example for using imagemagick from within a servlet. The servlet will convert an already existing original 
+Super simple example for using imagemagick (http://www.imagemagick.org/) from within a servlet. The servlet will convert an already existing original 
 image to one of the predefined desired sizes. 
 
 # What you need
