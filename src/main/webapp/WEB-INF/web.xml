@@ -20,12 +20,6 @@
 			<param-name>ExpiresDefault</param-name>
 			<param-value>access plus 1 month</param-value>
 		</init-param>
-		<!-- TODO: This should be setup within the application to set Cache-Control: 
-			no-cache, must-revalidate -->
-		<init-param>
-			<param-name>ExpiresByType image/png</param-name>
-			<param-value>access plus 3 month</param-value>
-		</init-param>
 	</filter>
 	<filter-mapping>
 		<filter-name>ExpiresFilter</filter-name>
@@ -35,7 +29,7 @@
 
 	<servlet>
 		<servlet-name>ThumbnailServlet</servlet-name>
-		<servlet-class>com.soulgalore.image.ThumbnailServlet</servlet-class>
+		<servlet-class>com.soulgalore.servlet.ThumbnailServlet</servlet-class>
 		<load-on-startup>5</load-on-startup>
 	</servlet>
 
