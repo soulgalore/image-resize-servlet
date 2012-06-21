@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Example of a imagemagick convert servlet. Will convert an already existing
@@ -84,6 +83,9 @@ public class ThumbnailServlet extends HttpServlet {
 
 		String sizes = config.getInitParameter("valid-sizes");
 		
+		if (sizes==null)
+			throw new ServletException("Missing parameter: valid-sizes");
+
 		StringTokenizer token = new StringTokenizer(sizes,",");
 		while (token.hasMoreTokens()) {
 			validSizes.add(token.nextToken());	
