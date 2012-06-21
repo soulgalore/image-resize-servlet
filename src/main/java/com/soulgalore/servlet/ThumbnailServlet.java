@@ -2,6 +2,9 @@ package com.soulgalore.servlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -26,7 +29,7 @@ import com.google.common.collect.ImmutableSet;
  * it exist, it will be returned
  * <li>
  * <li>If the images don't exist, the size will be created using imagemagick if
- * the size is configured as a {@link #VALID_SIZES}.</li>
+ * the size is configured as a {@link #validSizes}.</li>
  * <li>The image is returned</li>
  * </ul> No cache header is added within the servlet. Note also that the
  * imagemagick needs to be in the path of the user that's starts the servlet
@@ -47,8 +50,7 @@ public class ThumbnailServlet extends HttpServlet {
 	 * The valid sizes of an image. Use them to make sure the servlet can't be
 	 * missused.
 	 */
-	private static final ImmutableSet<String> VALID_SIZES = new ImmutableSet.Builder<String>()
-			.add("460x360", "220x172", "120x94", "80x62", "800x626").build();
+	private  Set<String> validSizes = new HashSet<String>();
 
 	/**
 	 * The name of the request parameter.
@@ -80,6 +82,13 @@ public class ThumbnailServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 
+		String sizes = config.getInitParameter("valid-sizes");
+		
+		StringTokenizer token = new StringTokenizer(sizes,",");
+		while (token.hasMoreTokens()) {
+			validSizes.add(token.nextToken());	
+		}
+		
 		destinationBaseDir = getServletContext().getRealPath(
 				"/" + THUMB_WEB_DIR);
 
@@ -131,7 +140,7 @@ public class ThumbnailServlet extends HttpServlet {
 
 		String size = getAskedFileSize(filename);
 
-		if (!VALID_SIZES.contains(size)) {
+		if (!validSizes.contains(size)) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
 					"Not a valid image size");
 			return false;

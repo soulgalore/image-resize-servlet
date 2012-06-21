@@ -31,6 +31,11 @@
 		<servlet-name>ThumbnailServlet</servlet-name>
 		<servlet-class>com.soulgalore.servlet.ThumbnailServlet</servlet-class>
 		<load-on-startup>5</load-on-startup>
+		<init-param>
+		<description></description>
+   		<param-name>valid-sizes</param-name>
+   		<param-value>460x360,220x172,120x94,80x62,800x626</param-value>
+   </init-param>
 	</servlet>
 
 	<servlet-mapping>
