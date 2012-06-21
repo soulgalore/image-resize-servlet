@@ -193,14 +193,13 @@ public class ThumbnailServlet extends HttpServlet {
 	private String getGeneratedFilePath(String fileName) {
 
 		int hashcode = fileName.hashCode();
-		int mask = 255;
-		int firstDir = hashcode & mask;
-		int secondDir = (hashcode >> 8) & mask;
-
+		
 		StringBuilder path = new StringBuilder(File.separator);
-		path.append(String.format("%03d", firstDir));
+		// first dir
+		path.append(String.format("%03d", hashcode & 255));
 		path.append(File.separator);
-		path.append(String.format("%03d", secondDir));
+		// second dir
+		path.append(String.format("%03d", (hashcode >> 8) & 255));
 		path.append(File.separator);
 
 		return path.toString();
