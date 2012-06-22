@@ -12,10 +12,9 @@ image to one of the predefined desired sizes (or whatever size you want, dependi
 <li>Setup the servlet in your web.xml (you can configure the request parameter name, original image folder, thumbnail base folder and a list of valid sizes of images)</li>
 
 <li>Access the servlet with the your predefined request parameter with the value of the image you want.
-
-```
+<code>
 /SERVLET/?img=MY_ORIGINAL_IMAGE-120x94.png
-```
+</code>
 </li>
 
 <li>The images is returned with that size, resized from the file MY_ORIGINAL_IMAGE.png</li>
