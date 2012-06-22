@@ -170,6 +170,15 @@ public class ThumbnailServlet extends HttpServlet {
 			return;
 		}
 
+		File originalFile = new File(originalBaseDir + getOriginalFileName(imageName)
+			+ getFileEnding(imageName));
+		
+		if (!originalFile.exists()) {
+			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
+					"Requested non existing original image");
+			return;
+		}
+		
 		try {
 			createThumbnail(imageName);
 			returnTheImage(req, resp, generatedPath + imageName);
