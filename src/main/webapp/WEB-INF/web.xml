@@ -32,10 +32,26 @@
 		<servlet-class>com.soulgalore.servlet.ThumbnailServlet</servlet-class>
 		<load-on-startup>5</load-on-startup>
 		<init-param>
-		<description></description>
+		<description>The valid sizez an image can be converted to</description>
    		<param-name>valid-sizes</param-name>
    		<param-value>460x360,220x172,120x94,80x62,800x626</param-value>
-   </init-param>
+	   </init-param>
+	   	<init-param>
+		<description>The base directory for the thumbnails</description>
+   		<param-name>thumbs-dir</param-name>
+   		<param-value>thumbs/</param-value>
+	   </init-param>
+	   <init-param>
+		<description>The directory where the original images are located</description>
+   		<param-name>originals-dir</param-name>
+   		<param-value>originals/</param-value>
+	   </init-param>
+	    <init-param>
+		<description>The name of the parameter used to access the servlet</description>
+   		<param-name>image-request-parameter-name</param-name>
+   		<param-value>img</param-value>
+	   </init-param>
+	   
 	</servlet>
 
 	<servlet-mapping>

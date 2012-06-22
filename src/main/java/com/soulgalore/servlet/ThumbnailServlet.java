@@ -13,26 +13,46 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 /**
- * Example of a imagemagick convert servlet. Will convert an already existing
- * image to a configured size, accessed size.
+ * <p>
+ * Example of a image-magick resize image servlet, that can resize an image on
+ * demand. Will resize an already existing original image to different
+ * configured size(s).
  * 
  * User scenario:
+ * </p>
  * <ol>
- * <li>Access the servlet with a specified name:
- * /SERVLET/?img=MY_ORIGINAL_IMAGE-120x94.png</li>
+ * <li>Access the servlet with a name that holds the new size of the original
+ * image <i>/SERVLET/?img=MY_ORIGINAL_IMAGE-120x94.png</i></li>
  * <li>The servlet will check if the original image exist (named
- * MY_ORIGINAL_IMAGE.png)</li>
- * <li>The servet will check if that size of the image already exist on disk, if
- * it exist, it will be returned
+ * MY_ORIGINAL_IMAGE.png in this example), meaning it is a valid request</li>
+ * <li>if the new size is configured in {@link #validSizes}, the image can</li>
+ * <li>The servlet will check if that size of the image already exist on disk,
+ * if it exist, it will be returned.
  * <li>
- * <li>If the images don't exist, the size will be created using imagemagick if
- * the size is configured as a {@link #validSizes}.</li>
+ * <li>If the images don't exist, the size will be created using image-magick</li>
  * <li>The image is returned</li>
- * </ul> No cache header is added within the servlet. Note also that the
- * imagemagick needs to be in the path of the user that's starts the servlet
- * runner.
+ * </ul>
+ * 
+ * <p>
+ * The servlet <b>needs</b> to be configured by the following parameters:
+ * <ul>
+ * <li>{@link #INIT_PARAMETER_VALID_SIZES} that will configure the valid image
+ * sizes. Configure by the format: <i>460x360,220x172,120x94</i></li>
+ * <li>{@link #INIT_PARAMETER_ORIGINAL_WEB_DIR} that is the relative path to the
+ * orignals web folder.</li>
+ * <li>{@link #INIT_PARAMETER_THUMB_WEB_DIR} that is the base web dir for the
+ * thumbnails.</li>
+ * <li>{@link #INIT_PARAMETER_IMG_REQUEST_PARAMETER} that is the name of the
+ * request parameter that will hold the value of the image that you want to
+ * fetch.</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * No cache header is added within the servlet. Note also that the imagemagick
+ * needs to be in the path of the user that's starts the servlet runner.
+ * </p>
  * 
  * 
  * 
@@ -40,31 +60,50 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ThumbnailServlet extends HttpServlet {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2092311650388075782L;
 
 	/**
-	 * The valid sizes of an image. Use them to make sure the servlet can't be
-	 * missused.
+	 * The valid sizes of an image. Fetched from the servlet init parameter
+	 * {@link #INIT_PARAMETER_VALID_SIZES}. If the parameter is empty all sizes
+	 * can be created.
 	 */
-	private  Set<String> validSizes = new HashSet<String>();
+	private Set<String> validSizes = new HashSet<String>();
+
+	/**
+	 * The name of the servlet init parameter for valid image sizes.
+	 */
+	private static final String INIT_PARAMETER_VALID_SIZES = "valid-sizes";
+
+	/**
+	 * The name of the servlet init parameter for the request parameter
+	 */
+	private static final String INIT_PARAMETER_IMG_REQUEST_PARAMETER = "image-request-parameter-name";
+
+	/**
+	 * The name of the servlet init parameter for the base dir for thumbnail
+	 * images.
+	 */
+	private static final String INIT_PARAMETER_THUMB_WEB_DIR = "thumbs-dir";
+
+	/**
+	 * The name of the servlet init parameter for where the original images are
+	 * located.
+	 */
+	private static final String INIT_PARAMETER_ORIGINAL_WEB_DIR = "originals-dir";
+
+	/**
+	 * Web thumbnail directory.
+	 */
+	private String thumbsDir;
+	/**
+	 * Directory for originals.
+	 */
+	private String originalsDir;
 
 	/**
 	 * The name of the request parameter.
 	 */
-	private static final String IMG_REQUEST_PARAMETER = "img";
-
-	/**
-	 * The web base dir of all thumbnails.
-	 */
-	private static final String THUMB_WEB_DIR = "thumbs/";
-
-	/**
-	 * The web base dir of all original images.
-	 */
-	private static final String ORIGINAL_WEB_DIR = "originals/";
+	private String requestParameterName;
 
 	/**
 	 * Where the original image will be located, need to be changed in a love
@@ -81,47 +120,59 @@ public class ThumbnailServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 
-		String sizes = config.getInitParameter("valid-sizes");
-		
-		if (sizes==null)
-			throw new ServletException("Missing parameter: valid-sizes");
+		String sizes = config.getInitParameter(INIT_PARAMETER_VALID_SIZES);
 
-		StringTokenizer token = new StringTokenizer(sizes,",");
-		while (token.hasMoreTokens()) {
-			validSizes.add(token.nextToken());	
-		}
-		
-		destinationBaseDir = getServletContext().getRealPath(
-				"/" + THUMB_WEB_DIR);
+		if (sizes != null) {
+			StringTokenizer token = new StringTokenizer(sizes, ",");
+			while (token.hasMoreTokens()) {
+				validSizes.add(token.nextToken());
+			}
+		} else
+			System.out.println("Running " + this.getClass().getName()
+					+ " without configured valid "
+					+ "sizes, use the servlet init parameter "
+					+ INIT_PARAMETER_VALID_SIZES + " to set it up");
 
-		originalBaseDir = getServletContext().getRealPath("/")
-				+ ORIGINAL_WEB_DIR;
+		requestParameterName = config
+				.getInitParameter(INIT_PARAMETER_IMG_REQUEST_PARAMETER);
+		thumbsDir = config.getInitParameter(INIT_PARAMETER_THUMB_WEB_DIR);
+		originalsDir = config.getInitParameter(INIT_PARAMETER_ORIGINAL_WEB_DIR);
+
+		destinationBaseDir = getServletContext().getRealPath("/" + thumbsDir);
+
+		originalBaseDir = getServletContext().getRealPath("/") + originalsDir;
+
+		System.out.println(this.getClass().getName() + " as "
+				+ config.getServletName()
+				+ " configured with request parameter name:"
+				+ requestParameterName + " origiginalDir:" + originalsDir
+				+ " thumbDir:" + thumbsDir + " and valid sizes:"
+				+ (sizes == null ? "" : sizes));
 	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		// fetch filename
-		String filename = req.getParameter(IMG_REQUEST_PARAMETER);
+		String imageName = req.getParameter(requestParameterName);
 
-		if (!isRequestValid(filename, resp))
+		if (!isRequestValid(imageName, resp))
 			return;
 
-		String generatedPath = getGeneratedFilePath(filename);
+		String generatedPath = getGeneratedFilePath(imageName);
 
-		File file = new File(originalBaseDir + generatedPath + filename);
+		File theImage = new File(originalBaseDir + generatedPath + imageName);
 
 		// does it exist?
-		if (file.exists()) {
+		if (theImage.exists()) {
 			// yes return it
-			returnTheFile(req, resp, generatedPath + filename);
+			returnTheImage(req, resp, generatedPath + imageName);
 			return;
 		}
 
 		try {
-			createThumbnail(filename);
-			returnTheFile(req, resp, generatedPath + filename);
+			createThumbnail(imageName);
+			returnTheImage(req, resp, generatedPath + imageName);
 			return;
 		} catch (Exception e) {
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -131,49 +182,27 @@ public class ThumbnailServlet extends HttpServlet {
 
 	}
 
-	private boolean isRequestValid(String filename, HttpServletResponse resp)
-			throws IOException {
-
-		if (filename == null) {
-			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-					"Missing parameter " + IMG_REQUEST_PARAMETER);
-			return false;
-		}
-
-		String size = getAskedFileSize(filename);
-
-		if (!validSizes.contains(size)) {
-			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-					"Not a valid image size");
-			return false;
-		} else
-			// TODO add regexp to verify filename standard
-			return true;
-	}
-
-	private void returnTheFile(HttpServletRequest req,
+	private void returnTheImage(HttpServletRequest req,
 			HttpServletResponse resp, String pathToFile)
 			throws ServletException, IOException {
 		RequestDispatcher rd = getServletContext().getRequestDispatcher(
-				"/" + THUMB_WEB_DIR + pathToFile);
+				"/" + thumbsDir + pathToFile);
 		rd.forward(req, resp);
 	}
 
 	private void createThumbnail(String filename) throws InterruptedException,
 			IOException {
 
-		File dir = new File(destinationBaseDir + getGeneratedFilePath(filename));
-
-		if (!dir.exists())
-			dir.mkdirs();
+		setupThumbDirs(filename);
 
 		String originalName = getOriginalFileName(filename);
 
 		ProcessBuilder pb = new ProcessBuilder("convert", "-thumbnail",
-				getAskedFileSize(filename), originalBaseDir + originalName
+				getRequestedFileSize(filename), originalBaseDir + originalName
 						+ getFileEnding(filename), destinationBaseDir
 						+ getGeneratedFilePath(filename) + originalName + "-"
-						+ getAskedFileSize(filename) + getFileEnding(filename));
+						+ getRequestedFileSize(filename)
+						+ getFileEnding(filename));
 
 		pb.directory(new File(originalBaseDir));
 		try {
@@ -188,6 +217,15 @@ public class ThumbnailServlet extends HttpServlet {
 		}
 	}
 
+	private void setupThumbDirs(String imageName) {
+
+		File dir = new File(destinationBaseDir
+				+ getGeneratedFilePath(imageName));
+
+		if (!dir.exists())
+			dir.mkdirs();
+	}
+
 	private String getOriginalFileName(String filename) {
 		return filename.substring(0, filename.lastIndexOf("-"));
 	}
@@ -196,15 +234,61 @@ public class ThumbnailServlet extends HttpServlet {
 		return filename.substring(filename.lastIndexOf("."), filename.length());
 	}
 
-	private String getAskedFileSize(String filename) {
+	private String getRequestedFileSize(String filename) {
 		return filename.substring(filename.lastIndexOf("-") + 1,
 				filename.lastIndexOf("."));
 	}
 
+	/**
+	 * Validate a request. If the request isnät valid, this method will send a
+	 * error on the response.
+	 * 
+	 * @param filename
+	 * @param resp
+	 * @return true if the request is valid.
+	 * @throws IOException
+	 */
+	private boolean isRequestValid(String filename, HttpServletResponse resp)
+			throws IOException {
+
+		if (filename == null) {
+			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
+					"Missing parameter " + requestParameterName);
+			return false;
+		}
+
+		// TODO add regexp to verify filename standard
+
+		// skip validation if no sizes has been setup
+		if (validSizes.isEmpty())
+			return true;
+
+		String size = getRequestedFileSize(filename);
+
+		if (!validSizes.contains(size)) {
+			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
+					"Not a valid image size");
+			return false;
+		} else
+			return true;
+	}
+
+	/**
+	 * Generate the file path, will always use the original filename, so that
+	 * all sizes of one file end uo in one directory.
+	 * 
+	 * @param fileName
+	 *            the requested file name
+	 * @return the path in the style of two dirs example /205/070/
+	 */
 	private String getGeneratedFilePath(String fileName) {
 
-		int hashcode = fileName.hashCode();
-		
+		// setup the thumbs dir based on the original name, so that all sizes
+		// are in the same working dir
+		String originalName = getOriginalFileName(fileName)
+				+ getFileEnding(fileName);
+		int hashcode = originalName.hashCode();
+
 		StringBuilder path = new StringBuilder(File.separator);
 		// first dir
 		path.append(String.format("%03d", hashcode & 255));
