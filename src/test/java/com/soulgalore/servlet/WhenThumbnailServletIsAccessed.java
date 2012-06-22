@@ -15,7 +15,6 @@ import org.xml.sax.SAXException;
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.HttpException;
 import com.meterware.httpunit.WebRequest;
-import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
 
@@ -28,6 +27,9 @@ public class WhenThumbnailServletIsAccessed {
 		sr = new ServletRunner();
 		Hashtable<String, String> ht = new Hashtable<String, String>();
 		ht.put("valid-sizes", "460x360,220x172,120x94,80x62,800x626");
+		ht.put("image-request-parameter-name","img");
+		ht.put("thumbs-dir", "thumbs/");
+		ht.put("originals-dir","originals/");
 		sr.registerServlet("thumbs", ThumbnailServlet.class.getName(), ht);
 
 	}
