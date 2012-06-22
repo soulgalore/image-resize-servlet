@@ -2,9 +2,25 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.soulgalore</groupId>
-	<artifactId>imagemagick</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>imagemagick-servlet</artifactId>
+	<version>0.3.0</version>
+	 <name>ImageMagick example resize servlet</name>
 
+	<description>
+    Example servlet for resizing images on demand using imagemagick.
+    </description>
+
+	<developers>
+		<developer>
+			<name>Peter Hedenskog</name>
+			<email>peter@soulgalore.com</email>
+			<timezone>+1</timezone>
+		</developer>
+	</developers>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<dependencies>
 
 		<dependency>
@@ -34,10 +50,15 @@
 			<version>1.1</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
-
-
 
 	<build>
 		<plugins>
@@ -76,6 +97,50 @@
 				</executions>
 			</plugin>
 
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<reportPlugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<version>2.8</version>
+							<configuration>
+								<encoding>UTF-8</encoding>
+							</configuration>
+						</plugin>
+						<plugin>
+							<groupId>org.codehaus.mojo</groupId>
+							<artifactId>findbugs-maven-plugin</artifactId>
+							<version>2.3.3</version>
+							<configuration>
+								<effort>Max</effort>
+							</configuration>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-checkstyle-plugin</artifactId>
+							<version>2.8</version>
+							<configuration>
+								<configLocation>http://soulgalore.com/checkstyle.xml</configLocation>
+								<encoding>UTF-8</encoding>
+
+							</configuration>
+							<!-- Fix for bug generating checkstyle runs twice, fixed for 2.9 -->
+							<reportSets>
+								<reportSet>
+									<reports>
+										<report>checkstyle</report>
+									</reports>
+								</reportSet>
+							</reportSets>
+						</plugin>
+					</reportPlugins>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
