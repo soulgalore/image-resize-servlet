@@ -30,7 +30,6 @@
 	<servlet>
 		<servlet-name>ThumbnailServlet</servlet-name>
 		<servlet-class>com.soulgalore.servlet.ThumbnailServlet</servlet-class>
-		<load-on-startup>5</load-on-startup>
 		<init-param>
 		<description>The valid sizez an image can be converted to</description>
    		<param-name>valid-sizes</param-name>
@@ -51,7 +50,6 @@
    		<param-name>image-request-parameter-name</param-name>
    		<param-value>img</param-value>
 	   </init-param>
-	   
 	</servlet>
 
 	<servlet-mapping>
