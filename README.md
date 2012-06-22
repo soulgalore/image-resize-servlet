@@ -25,6 +25,7 @@ The servlet will check if the image already exist in the requested size.  If the
 original image exist (named MY_ORIGINAL_IMAGE.png) and that the requested size is valid (you can configure valid size or say that all sizes are valid)
 . If the request is valid, a new imaged is resized and put in your configured thumbnail base dir + a generated folder path that is calculated from the original file name, so that files are spread within the file system (but all sizes for a specific file, are within the same folder). Then the new image is returned to the user.
 
+# Extras
 Default Tomcat is setup using https://github.com/jsimone/webapp-runner, just so it easy to get the servlet up & running. Also an expire filter is setup in the web.xml to set some cache headers.
 
 TODO:
