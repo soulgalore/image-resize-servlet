@@ -5,5 +5,14 @@
 *.war
 *.ear
 
-src/main/webapp/thumbs/**
-/target
+src/main/webapp/thumbs/
+target
+
+# eclipse
+.settings
+.classpath
+.project
+.checkstyle
+
+# mac
+.DS_Store
