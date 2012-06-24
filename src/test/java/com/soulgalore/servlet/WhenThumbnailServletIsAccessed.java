@@ -15,6 +15,7 @@ import org.xml.sax.SAXException;
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.HttpException;
 import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
 
@@ -31,6 +32,7 @@ public class WhenThumbnailServletIsAccessed {
 		ht.put("thumbs-dir", "thumbs/");
 		ht.put("originals-dir","originals/");
 		sr.registerServlet("thumbs", ThumbnailServlet.class.getName(), ht);
+		
 
 	}
 
@@ -68,5 +70,22 @@ public class WhenThumbnailServletIsAccessed {
 		}
 
 	}
+	
+	@Test
+	public void aThumbnailShouldBeCreated() throws IOException, SAXException {
+		ServletUnitClient sc = sr.newClient();
+		WebRequest request = new GetMethodWebRequest("http://localhost/thumbs");
+		request.setParameter("img", "test-120x94.png");
+		try {
+			WebResponse wr = sc.getResponse(request);
+			assertThat(wr.getResponseCode(), is(HttpServletResponse.SC_OK));
+			assertThat(wr.getContentType(), is("image/png"));
+			
+		} catch (HttpException e) {
+			fail("Couldn't fetch thumbnail");
+		}
+		
+	}
+	
 
 }
