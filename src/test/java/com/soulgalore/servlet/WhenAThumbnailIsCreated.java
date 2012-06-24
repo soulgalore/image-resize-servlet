@@ -21,6 +21,7 @@ public class WhenAThumbnailIsCreated {
 				+ ".png");
 		assertThat(thumbnail.getImageDimensions(), is(dimensions));
 
+		// test craze name
 		thumbnail = new Thumbnail("my-Super_Im.ag._With_.png.----crazy-name-"
 				+ dimensions + ".png");
 		assertThat(thumbnail.getImageDimensions(), is(dimensions));
