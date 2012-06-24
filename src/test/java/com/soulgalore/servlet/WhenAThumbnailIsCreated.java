@@ -29,7 +29,7 @@ public class WhenAThumbnailIsCreated {
 	@Test
 	public void theFileNameShouldBeRight() {
 		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x29.png");
-		assertThat(thumbnail.getOriginalImageName(),
+		assertThat(thumbnail.getImageFileName(),
 				is("mySuperImage-120x29.png"));
 	}
 
@@ -44,13 +44,13 @@ public class WhenAThumbnailIsCreated {
 	}
 
 	@Test
-	public void theOriginalFullnameShouldBeRght() {
+	public void theOriginalFullnameShouldBeRight() {
 		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x29.png");
 		assertThat(thumbnail.getOriginalImageNameWithExtension(),
 				is("mySuperImage.png"));
 
 		thumbnail = new Thumbnail("imagee-120x29-1267x98.jpg");
-		assertThat(thumbnail.getOriginalImageNameWithExtension(), is("imagee.png"));
+		assertThat(thumbnail.getOriginalImageNameWithExtension(), is("imagee-120x29.jpg"));
 
 	}
 
