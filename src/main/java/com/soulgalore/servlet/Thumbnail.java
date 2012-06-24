@@ -1,9 +1,29 @@
+/******************************************************
+ * Imagemagick resize example servlet
+ * 
+ *
+ * Copyright (C) 2012 by Peter Hedenskog (http://peterhedenskog.com)
+ *
+ ******************************************************
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in 
+ * compliance with the License. You may obtain a copy of the License at
+ * 
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is 
+ * distributed  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.   
+ * See the License for the specific language governing permissions and limitations under the License.
+ *
+ *******************************************************
+ */
 package com.soulgalore.servlet;
 
 import java.io.File;
 
 class Thumbnail {
-	
+
 	private static final int MASK = 255;
 	private static final int BYTE = 8;
 
@@ -13,7 +33,7 @@ class Thumbnail {
 	private final String imageFileExtension;
 	private final String imageDimensions;
 	private final String generatedFilePath;
-	
+
 	/**
 	 * Create a thumbnail. Note will not check the file format.
 	 * 
@@ -34,15 +54,15 @@ class Thumbnail {
 	}
 
 	/**
-	 * Get the generated the file path, will always use the original filename, so that
-	 * all sizes of one file end up in one directory.
+	 * Get the generated the file path, will always use the original filename,
+	 * so that all sizes of one file end up in one directory.
+	 * 
 	 * @return the path in the style of two dirs example /205/070/
 	 */
 	String getGeneratedFilePath() {
 		return generatedFilePath;
 	}
-	
-	
+
 	String getImageDimensions() {
 		return imageDimensions;
 	}
@@ -60,12 +80,12 @@ class Thumbnail {
 	}
 
 	String getOriginalImageNameWithExtension() {
-		return originalImageNameWithExtension; 
+		return originalImageNameWithExtension;
 	}
-	
+
 	/**
-	 * Create the generated the file path, will always use the original filename, so that
-	 * all sizes of one file end up in one directory.
+	 * Create the generated the file path, will always use the original
+	 * filename, so that all sizes of one file end up in one directory.
 	 * 
 	 * @return the path in the style of two dirs example /205/070/
 	 */
@@ -112,6 +132,4 @@ class Thumbnail {
 		return true;
 	}
 
-	
-	
 }
