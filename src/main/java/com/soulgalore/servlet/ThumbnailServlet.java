@@ -197,14 +197,6 @@ public class ThumbnailServlet extends HttpServlet {
 
 	}
 
-	private void returnTheImage(HttpServletRequest req,
-			HttpServletResponse resp, String pathToFile)
-			throws ServletException, IOException {
-		RequestDispatcher rd = getServletContext().getRequestDispatcher(
-				"/" + thumbsDir + pathToFile);
-		rd.forward(req, resp);
-	}
-
 	private void createThumbnail(Thumbnail thumbnail)
 			throws InterruptedException, IOException {
 
@@ -229,15 +221,6 @@ public class ThumbnailServlet extends HttpServlet {
 			e1.printStackTrace();
 			throw e1;
 		}
-	}
-
-	private void setupThumbDirs(Thumbnail thumbnail) {
-
-		File dir = new File(destinationBaseDir
-				+ thumbnail.getGeneratedFilePath());
-
-		if (!dir.exists())
-			dir.mkdirs();
 	}
 
 	/**
@@ -279,6 +262,23 @@ public class ThumbnailServlet extends HttpServlet {
 		} else
 			return true;
 
+	}
+
+	private void returnTheImage(HttpServletRequest req,
+			HttpServletResponse resp, String pathToFile)
+			throws ServletException, IOException {
+		RequestDispatcher rd = getServletContext().getRequestDispatcher(
+				"/" + thumbsDir + pathToFile);
+		rd.forward(req, resp);
+	}
+
+	private void setupThumbDirs(Thumbnail thumbnail) {
+
+		File dir = new File(destinationBaseDir
+				+ thumbnail.getGeneratedFilePath());
+
+		if (!dir.exists())
+			dir.mkdirs();
 	}
 
 }

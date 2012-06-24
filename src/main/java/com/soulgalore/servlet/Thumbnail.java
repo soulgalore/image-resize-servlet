@@ -39,6 +39,27 @@ class Thumbnail {
 		return generatedFilePath;
 	}
 	
+	
+	String getImageDimensions() {
+		return imageDimensions;
+	}
+
+	String getImageFileEnding() {
+		return imageFileEnding;
+	}
+
+	String getImageFileName() {
+		return imageFileName;
+	}
+
+	String getOriginalImageName() {
+		return originalImageName;
+	}
+
+	String getOriginalImageNameWithEnding() {
+		return originalImageNameWithEnding; 
+	}
+	
 	/**
 	 * Create the generated the file path, will always use the original filename, so that
 	 * all sizes of one file end up in one directory.
@@ -60,26 +81,6 @@ class Thumbnail {
 		path.append(File.separator);
 
 		return path.toString();
-	}
-
-	String getImageFileName() {
-		return imageFileName;
-	}
-
-	String getOriginalImageName() {
-		return originalImageName;
-	}
-
-	String getOriginalImageNameWithEnding() {
-		return originalImageNameWithEnding; 
-	}
-
-	String getImageFileEnding() {
-		return imageFileEnding;
-	}
-
-	String getImageDimensions() {
-		return imageDimensions;
 	}
 
 }
