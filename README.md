@@ -1,5 +1,4 @@
-# Imagemagick resize servlet example [![Build Status](https://secure.travis-ci.org/soulgalore/imagemagick-servlet
-.png?branch=master)](http://travis-ci.org/soulgalore/imagemagick-servlet?branch=master)
+# Imagemagick resize servlet example [![Build Status](https://secure.travis-ci.org/soulgalore/imagemagick-servlet.png)](http://travis-ci.org/soulgalore/imagemagick-servlet.png)
 
 Super simple example for using imagemagick (http://www.imagemagick.org/) from within a servlet. The servlet will resize an already existing original 
 image to one of the predefined desired sizes (or whatever size you want, depending on configuration).
