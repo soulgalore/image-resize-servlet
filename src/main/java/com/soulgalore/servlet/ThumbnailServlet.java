@@ -213,12 +213,10 @@ public class ThumbnailServlet extends HttpServlet {
 		pb.directory(new File(originalBaseDir));
 		try {
 			Process p = pb.start();
-			// wait until it created
+			// wait until it's created
 			p.waitFor();
 
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 			throw e1;
 		}
 	}
