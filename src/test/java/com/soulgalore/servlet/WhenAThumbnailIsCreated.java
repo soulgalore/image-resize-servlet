@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.is;
 import org.junit.Test;
 
-public class WhenAThumbnailsCreated {
+public class WhenAThumbnailIsCreated {
 
 	@Test
 	public void theGeneratedFilePathShouldNotBeNull() {
