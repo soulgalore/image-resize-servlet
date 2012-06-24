@@ -280,8 +280,11 @@ public class ThumbnailServlet extends HttpServlet {
 		final File dir = new File(destinationBaseDir
 				+ thumbnail.getGeneratedFilePath());
 
-		if (!dir.exists())
-			dir.mkdirs();
+		if (!dir.exists()) {
+			if (!dir.mkdirs())
+				System.err.println("Couldn't create dir:"
+						+ dir.getAbsolutePath());
+		}
 	}
 
 }
