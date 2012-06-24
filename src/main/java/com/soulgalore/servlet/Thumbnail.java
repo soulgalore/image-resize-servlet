@@ -6,8 +6,8 @@ class Thumbnail {
 
 	private final String imageFileName;
 	private final String originalImageName;
-	private final String originalImageNameWithEnding;
-	private final String imageFileEnding;
+	private final String originalImageNameWithExtension;
+	private final String imageFileExtension;
 	private final String imageDimensions;
 	private final String generatedFilePath;
 	
@@ -21,12 +21,12 @@ class Thumbnail {
 		imageFileName = theFileName;
 		originalImageName = imageFileName.substring(0,
 				imageFileName.lastIndexOf("-"));
-		imageFileEnding = imageFileName.substring(
+		imageFileExtension = imageFileName.substring(
 				imageFileName.lastIndexOf("."), imageFileName.length());
 		imageDimensions = imageFileName.substring(
 				imageFileName.lastIndexOf("-") + 1,
 				imageFileName.lastIndexOf("."));
-		originalImageNameWithEnding = originalImageName + imageFileEnding;
+		originalImageNameWithExtension = originalImageName + imageFileExtension;
 		generatedFilePath = createFilePath();
 	}
 
@@ -44,8 +44,8 @@ class Thumbnail {
 		return imageDimensions;
 	}
 
-	String getImageFileEnding() {
-		return imageFileEnding;
+	String getImageFileExtension() {
+		return imageFileExtension;
 	}
 
 	String getImageFileName() {
@@ -56,8 +56,8 @@ class Thumbnail {
 		return originalImageName;
 	}
 
-	String getOriginalImageNameWithEnding() {
-		return originalImageNameWithEnding; 
+	String getOriginalImageNameWithExtension() {
+		return originalImageNameWithExtension; 
 	}
 	
 	/**
@@ -70,7 +70,7 @@ class Thumbnail {
 
 		// setup the thumbs dir based on the original name, so that all sizes
 		// are in the same working dir
-		int hashcode = originalImageNameWithEnding.hashCode();
+		int hashcode = originalImageNameWithExtension.hashCode();
 
 		StringBuilder path = new StringBuilder(File.separator);
 		// first dir

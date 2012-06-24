@@ -176,7 +176,7 @@ public class ThumbnailServlet extends HttpServlet {
 		}
 
 		File originalFile = new File(originalBaseDir
-				+ thumbnail.getOriginalImageNameWithEnding()
+				+ thumbnail.getOriginalImageNameWithExtension()
 				);
 
 		if (!originalFile.exists()) {
@@ -204,11 +204,11 @@ public class ThumbnailServlet extends HttpServlet {
 
 		ProcessBuilder pb = new ProcessBuilder("convert", "-thumbnail",
 				thumbnail.getImageDimensions(), originalBaseDir
-						+ thumbnail.getOriginalImageNameWithEnding(),
+						+ thumbnail.getOriginalImageNameWithExtension(),
 				destinationBaseDir + thumbnail.getGeneratedFilePath()
 						+ thumbnail.getOriginalImageName() + "-"
 						+ thumbnail.getImageDimensions()
-						+ thumbnail.getImageFileEnding());
+						+ thumbnail.getImageFileExtension());
 
 		pb.directory(new File(originalBaseDir));
 		try {

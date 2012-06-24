@@ -46,21 +46,21 @@ public class WhenAThumbnailsCreated {
 	@Test
 	public void theOriginalFullnameShouldBeRght() {
 		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x29.png");
-		assertThat(thumbnail.getOriginalImageNameWithEnding(),
+		assertThat(thumbnail.getOriginalImageNameWithExtension(),
 				is("mySuperImage.png"));
 
 		thumbnail = new Thumbnail("imagee-120x29-1267x98.jpg");
-		assertThat(thumbnail.getOriginalImageNameWithEnding(), is("imagee.png"));
+		assertThat(thumbnail.getOriginalImageNameWithExtension(), is("imagee.png"));
 
 	}
 
 	@Test
 	public void theFileEndingShoukdBeRight() {
 		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x29.png");
-		assertThat(thumbnail.getImageFileEnding(), is(".png"));
+		assertThat(thumbnail.getImageFileExtension(), is(".png"));
 
 		thumbnail = new Thumbnail("mySuper.gif.Image-120x29.jpg");
-		assertThat(thumbnail.getImageFileEnding(), is(".jpg"));
+		assertThat(thumbnail.getImageFileExtension(), is(".jpg"));
 
 	}
 
