@@ -159,7 +159,12 @@ public class ThumbnailServlet extends HttpServlet {
 		if (!isRequestValid(imageName, resp))
 			return;
 
-		String generatedPath = getGeneratedFilePath(imageName);
+		Thumbnail thumbnail = new Thumbnail(imageName);
+
+		if (!isSizeValid(thumbnail, resp))
+			return;
+
+		String generatedPath = thumbnail.getGeneratedFilePath();
 
 		File theImage = new File(originalBaseDir + generatedPath + imageName);
 
@@ -170,17 +175,18 @@ public class ThumbnailServlet extends HttpServlet {
 			return;
 		}
 
-		File originalFile = new File(originalBaseDir + getOriginalFileName(imageName)
-			+ getFileEnding(imageName));
-		
+		File originalFile = new File(originalBaseDir
+				+ thumbnail.getOriginalImageNameWithEnding()
+				);
+
 		if (!originalFile.exists()) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
 					"Requested non existing original image");
 			return;
 		}
-		
+
 		try {
-			createThumbnail(imageName);
+			createThumbnail(thumbnail);
 			returnTheImage(req, resp, generatedPath + imageName);
 			return;
 		} catch (Exception e) {
@@ -199,19 +205,18 @@ public class ThumbnailServlet extends HttpServlet {
 		rd.forward(req, resp);
 	}
 
-	private void createThumbnail(String filename) throws InterruptedException,
-			IOException {
+	private void createThumbnail(Thumbnail thumbnail)
+			throws InterruptedException, IOException {
 
-		setupThumbDirs(filename);
-
-		String originalName = getOriginalFileName(filename);
+		setupThumbDirs(thumbnail);
 
 		ProcessBuilder pb = new ProcessBuilder("convert", "-thumbnail",
-				getRequestedFileSize(filename), originalBaseDir + originalName
-						+ getFileEnding(filename), destinationBaseDir
-						+ getGeneratedFilePath(filename) + originalName + "-"
-						+ getRequestedFileSize(filename)
-						+ getFileEnding(filename));
+				thumbnail.getImageDimensions(), originalBaseDir
+						+ thumbnail.getOriginalImageNameWithEnding(),
+				destinationBaseDir + thumbnail.getGeneratedFilePath()
+						+ thumbnail.getOriginalImageName() + "-"
+						+ thumbnail.getImageDimensions()
+						+ thumbnail.getImageFileEnding());
 
 		pb.directory(new File(originalBaseDir));
 		try {
@@ -226,26 +231,13 @@ public class ThumbnailServlet extends HttpServlet {
 		}
 	}
 
-	private void setupThumbDirs(String imageName) {
+	private void setupThumbDirs(Thumbnail thumbnail) {
 
 		File dir = new File(destinationBaseDir
-				+ getGeneratedFilePath(imageName));
+				+ thumbnail.getGeneratedFilePath());
 
 		if (!dir.exists())
 			dir.mkdirs();
-	}
-
-	private String getOriginalFileName(String filename) {
-		return filename.substring(0, filename.lastIndexOf("-"));
-	}
-
-	private String getFileEnding(String filename) {
-		return filename.substring(filename.lastIndexOf("."), filename.length());
-	}
-
-	private String getRequestedFileSize(String filename) {
-		return filename.substring(filename.lastIndexOf("-") + 1,
-				filename.lastIndexOf("."));
 	}
 
 	/**
@@ -268,45 +260,25 @@ public class ThumbnailServlet extends HttpServlet {
 
 		// TODO add regexp to verify filename standard
 
+		return true;
+	}
+
+	private boolean isSizeValid(Thumbnail thumbnail, HttpServletResponse resp)
+			throws IOException {
+
 		// skip validation if no sizes has been setup
 		if (validSizes.isEmpty())
 			return true;
 
-		String size = getRequestedFileSize(filename);
+		String size = thumbnail.getImageDimensions();
 
 		if (!validSizes.contains(size)) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-					"Not a valid image size");
+					"Not a valid image size:" + size);
 			return false;
 		} else
 			return true;
-	}
 
-	/**
-	 * Generate the file path, will always use the original filename, so that
-	 * all sizes of one file end uo in one directory.
-	 * 
-	 * @param fileName
-	 *            the requested file name
-	 * @return the path in the style of two dirs example /205/070/
-	 */
-	private String getGeneratedFilePath(String fileName) {
-
-		// setup the thumbs dir based on the original name, so that all sizes
-		// are in the same working dir
-		String originalName = getOriginalFileName(fileName)
-				+ getFileEnding(fileName);
-		int hashcode = originalName.hashCode();
-
-		StringBuilder path = new StringBuilder(File.separator);
-		// first dir
-		path.append(String.format("%03d", hashcode & 255));
-		path.append(File.separator);
-		// second dir
-		path.append(String.format("%03d", (hashcode >> 8) & 255));
-		path.append(File.separator);
-
-		return path.toString();
 	}
 
 }
