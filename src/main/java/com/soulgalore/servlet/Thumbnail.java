@@ -3,6 +3,9 @@ package com.soulgalore.servlet;
 import java.io.File;
 
 class Thumbnail {
+	
+	private static final int MASK = 255;
+	private static final int BYTE = 8;
 
 	private final String imageFileName;
 	private final String originalImageName;
@@ -70,17 +73,45 @@ class Thumbnail {
 
 		// setup the thumbs dir based on the original name, so that all sizes
 		// are in the same working dir
-		int hashcode = originalImageNameWithExtension.hashCode();
+		final int hashcode = originalImageNameWithExtension.hashCode();
 
-		StringBuilder path = new StringBuilder(File.separator);
+		final StringBuilder path = new StringBuilder(File.separator);
 		// first dir
-		path.append(String.format("%03d", hashcode & 255));
+		path.append(String.format("%03d", hashcode & MASK));
 		path.append(File.separator);
 		// second dir
-		path.append(String.format("%03d", (hashcode >> 8) & 255));
+		path.append(String.format("%03d", (hashcode >> BYTE) & MASK));
 		path.append(File.separator);
 
 		return path.toString();
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((imageFileName == null) ? 0 : imageFileName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Thumbnail other = (Thumbnail) obj;
+		if (imageFileName == null) {
+			if (other.imageFileName != null)
+				return false;
+		} else if (!imageFileName.equals(other.imageFileName))
+			return false;
+		return true;
+	}
+
+	
+	
 }

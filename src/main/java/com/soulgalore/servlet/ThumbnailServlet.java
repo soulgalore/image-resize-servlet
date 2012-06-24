@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  * <li>
  * <li>If the images don't exist, the size will be created using image-magick</li>
  * <li>The image is returned</li>
- * </ul>
+ * </ol>
  * 
  * <p>
  * The servlet <b>needs</b> to be configured by the following parameters:
@@ -63,19 +63,12 @@ public class ThumbnailServlet extends HttpServlet {
 	private static final long serialVersionUID = -2092311650388075782L;
 
 	/**
-	 * The valid sizes of an image. Fetched from the servlet init parameter
-	 * {@link #INIT_PARAMETER_VALID_SIZES}. If the parameter is empty all sizes
-	 * can be created.
-	 */
-	private Set<String> validSizes = new HashSet<String>();
-
-	/**
 	 * The name of the servlet init parameter for valid image sizes.
 	 */
 	private static final String INIT_PARAMETER_VALID_SIZES = "valid-sizes";
 
 	/**
-	 * The name of the servlet init parameter for the request parameter
+	 * The name of the servlet init parameter for the request parameter.
 	 */
 	private static final String INIT_PARAMETER_IMG_REQUEST_PARAMETER = "image-request-parameter-name";
 
@@ -90,6 +83,13 @@ public class ThumbnailServlet extends HttpServlet {
 	 * located.
 	 */
 	private static final String INIT_PARAMETER_ORIGINAL_WEB_DIR = "originals-dir";
+
+	/**
+	 * The valid sizes of an image. Fetched from the servlet init parameter
+	 * {@link #INIT_PARAMETER_VALID_SIZES}. If the parameter is empty all sizes
+	 * can be created.
+	 */
+	private Set<String> validSizes = new HashSet<String>();
 
 	/**
 	 * Web thumbnail directory.
@@ -120,10 +120,11 @@ public class ThumbnailServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 
-		String sizes = config.getInitParameter(INIT_PARAMETER_VALID_SIZES);
+		final String sizes = config
+				.getInitParameter(INIT_PARAMETER_VALID_SIZES);
 
 		if (sizes != null) {
-			StringTokenizer token = new StringTokenizer(sizes, ",");
+			final StringTokenizer token = new StringTokenizer(sizes, ",");
 			while (token.hasMoreTokens()) {
 				validSizes.add(token.nextToken());
 			}
@@ -154,19 +155,20 @@ public class ThumbnailServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		String imageName = req.getParameter(requestParameterName);
+		final String imageName = req.getParameter(requestParameterName);
 
 		if (!isRequestValid(imageName, resp))
 			return;
 
-		Thumbnail thumbnail = new Thumbnail(imageName);
+		final Thumbnail thumbnail = new Thumbnail(imageName);
 
 		if (!isSizeValid(thumbnail, resp))
 			return;
 
-		String generatedPath = thumbnail.getGeneratedFilePath();
+		final String generatedPath = thumbnail.getGeneratedFilePath();
 
-		File theImage = new File(originalBaseDir + generatedPath + imageName);
+		final File theImage = new File(originalBaseDir + generatedPath
+				+ imageName);
 
 		// does it exist?
 		if (theImage.exists()) {
@@ -175,9 +177,8 @@ public class ThumbnailServlet extends HttpServlet {
 			return;
 		}
 
-		File originalFile = new File(originalBaseDir
-				+ thumbnail.getOriginalImageNameWithExtension()
-				);
+		final File originalFile = new File(originalBaseDir
+				+ thumbnail.getOriginalImageNameWithExtension());
 
 		if (!originalFile.exists()) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
@@ -189,7 +190,11 @@ public class ThumbnailServlet extends HttpServlet {
 			createThumbnail(thumbnail);
 			returnTheImage(req, resp, generatedPath + imageName);
 			return;
-		} catch (Exception e) {
+		} catch (IOException e) {
+			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					"Couldn't create thumbnail");
+			return;
+		} catch (InterruptedException e) {
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					"Couldn't create thumbnail");
 			return;
@@ -202,7 +207,7 @@ public class ThumbnailServlet extends HttpServlet {
 
 		setupThumbDirs(thumbnail);
 
-		ProcessBuilder pb = new ProcessBuilder("convert", "-thumbnail",
+		final ProcessBuilder pb = new ProcessBuilder("convert", "-thumbnail",
 				thumbnail.getImageDimensions(), originalBaseDir
 						+ thumbnail.getOriginalImageNameWithExtension(),
 				destinationBaseDir + thumbnail.getGeneratedFilePath()
@@ -212,7 +217,7 @@ public class ThumbnailServlet extends HttpServlet {
 
 		pb.directory(new File(originalBaseDir));
 		try {
-			Process p = pb.start();
+			final Process p = pb.start();
 			// wait until it's created
 			p.waitFor();
 
@@ -222,7 +227,7 @@ public class ThumbnailServlet extends HttpServlet {
 	}
 
 	/**
-	 * Validate a request. If the request isnät valid, this method will send a
+	 * Validate a request. If the request isn't valid, this method will send a
 	 * error on the response.
 	 * 
 	 * @param filename
@@ -251,7 +256,7 @@ public class ThumbnailServlet extends HttpServlet {
 		if (validSizes.isEmpty())
 			return true;
 
-		String size = thumbnail.getImageDimensions();
+		final String size = thumbnail.getImageDimensions();
 
 		if (!validSizes.contains(size)) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
@@ -265,14 +270,14 @@ public class ThumbnailServlet extends HttpServlet {
 	private void returnTheImage(HttpServletRequest req,
 			HttpServletResponse resp, String pathToFile)
 			throws ServletException, IOException {
-		RequestDispatcher rd = getServletContext().getRequestDispatcher(
+		final RequestDispatcher rd = getServletContext().getRequestDispatcher(
 				"/" + thumbsDir + pathToFile);
 		rd.forward(req, resp);
 	}
 
 	private void setupThumbDirs(Thumbnail thumbnail) {
 
-		File dir = new File(destinationBaseDir
+		final File dir = new File(destinationBaseDir
 				+ thumbnail.getGeneratedFilePath());
 
 		if (!dir.exists())
