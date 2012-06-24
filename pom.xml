@@ -21,8 +21,23 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	<dependencies>
 
+	<licenses>
+		<license>
+			<name>Apache License 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<scm>
+		<connection>scm:git:git://github.com/soulgalore/imagemagick-servlet.git</connection>
+		<developerConnection>scm:git:git@github.com:soulgalore/imagemagick-servlet.git</developerConnection>
+		<url>https://github.com/soulgalore/imagemagick-servlet/</url>
+	</scm>
+
+
+	<dependencies>
 		<dependency>
 			<groupId>com.github.jsimone</groupId>
 			<artifactId>webapp-runner</artifactId>
@@ -78,8 +93,8 @@
 					<parallel>classes</parallel>
 					<threadCount>1</threadCount>
 					<includes>
-            			<include>**/*.java</include>
-          			</includes>
+						<include>**/*.java</include>
+					</includes>
 				</configuration>
 			</plugin>
 			<plugin>
