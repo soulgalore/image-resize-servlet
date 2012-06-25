@@ -43,7 +43,8 @@ import javax.servlet.http.HttpServletResponse;
  * </p>
  * <ol>
  * <li>Access the servlet with a name that holds the new size of the original
- * image <i>/SERVLET/?img=MY_ORIGINAL_IMAGE-120x94.png</i></li>
+ * image <i>/SERVLET/?img=MY_ORIGINAL_IMAGE-120x94.png</i> (need to be of the 
+ * format of {@link Thumbnail#MATCHING_NAME_REGEXP}</li>
  * <li>The servlet will check if the original image exist (named
  * MY_ORIGINAL_IMAGE.png in this example), meaning it is a valid request</li>
  * <li>if the new size is configured in {@link #validSizes}, the image can</li>
@@ -298,17 +299,20 @@ public class ThumbnailServlet extends HttpServlet {
 	 * 
 	 * @param thumbnail
 	 *            the thumbnail
+	 * @return the dir           
 	 */
 	protected File setupThumbDirs(Thumbnail thumbnail) {
 
 		final File dir = new File(destinationBaseDir
 				+ thumbnail.getGeneratedFilePath());
 
+		// bad error handling
 		if (!dir.exists()) {
 			if (!dir.mkdirs())
 				System.err.println("Couldn't create dir:"
 						+ dir.getAbsolutePath());
 		}
+		
 		return dir;
 	}
 
