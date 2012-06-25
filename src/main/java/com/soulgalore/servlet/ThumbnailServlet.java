@@ -199,7 +199,7 @@ public class ThumbnailServlet extends HttpServlet {
 
 		final File originalFile = new File(originalBaseDir
 				+ thumbnail.getOriginalImageNameWithExtension());
-		
+
 		if (!originalFile.exists()) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
 					"Requested non existing original image");
@@ -207,7 +207,11 @@ public class ThumbnailServlet extends HttpServlet {
 		}
 
 		try {
-			createThumbnail(thumbnail);
+			setupThumbDirs(thumbnail);
+			
+			ThumbnailCreator.getInstance().createThumbnail(thumbnail,
+					originalBaseDir, destinationBaseDir);
+
 			returnTheImage(req, resp, generatedPath + imageName);
 			return;
 		} catch (IOException e) {
@@ -220,30 +224,6 @@ public class ThumbnailServlet extends HttpServlet {
 			return;
 		}
 
-	}
-
-	private void createThumbnail(Thumbnail thumbnail)
-			throws InterruptedException, IOException {
-
-		setupThumbDirs(thumbnail);
-
-		final ProcessBuilder pb = new ProcessBuilder("convert", "-thumbnail",
-				thumbnail.getImageDimensions(), originalBaseDir
-						+ thumbnail.getOriginalImageNameWithExtension(),
-				destinationBaseDir + thumbnail.getGeneratedFilePath()
-						+ thumbnail.getOriginalImageName() + "-"
-						+ thumbnail.getImageDimensions()
-						+ thumbnail.getImageFileExtension());
-
-		pb.directory(new File(originalBaseDir));
-		try {
-			final Process p = pb.start();
-			// wait until it's created
-			p.waitFor();
-
-		} catch (IOException e1) {
-			throw e1;
-		}
 	}
 
 	/**
