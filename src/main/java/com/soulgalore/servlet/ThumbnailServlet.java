@@ -1,5 +1,5 @@
 /******************************************************
- * Imagemagick resize example servlet
+ * Imagemagick resize servlet
  * 
  *
  * Copyright (C) 2012 by Peter Hedenskog (http://peterhedenskog.com)
@@ -299,7 +299,7 @@ public class ThumbnailServlet extends HttpServlet {
 	 * @param thumbnail
 	 *            the thumbnail
 	 */
-	protected void setupThumbDirs(Thumbnail thumbnail) {
+	protected File setupThumbDirs(Thumbnail thumbnail) {
 
 		final File dir = new File(destinationBaseDir
 				+ thumbnail.getGeneratedFilePath());
@@ -309,6 +309,7 @@ public class ThumbnailServlet extends HttpServlet {
 				System.err.println("Couldn't create dir:"
 						+ dir.getAbsolutePath());
 		}
+		return dir;
 	}
 
 }

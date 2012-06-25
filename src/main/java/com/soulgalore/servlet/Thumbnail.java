@@ -1,5 +1,5 @@
 /******************************************************
- * Imagemagick resize example servlet
+ * Imagemagick resize servlet
  * 
  *
  * Copyright (C) 2012 by Peter Hedenskog (http://peterhedenskog.com)

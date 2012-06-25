@@ -1,5 +1,5 @@
 /******************************************************
- * Imagemagick resize example servlet
+ * Imagemagick resize servlet
  * 
  *
  * Copyright (C) 2012 by Peter Hedenskog (http://peterhedenskog.com)
@@ -22,6 +22,7 @@ package com.soulgalore.servlet;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Hashtable;
@@ -52,12 +53,29 @@ public class WhenTheServletIsAccessed {
 
 		sr.registerServlet("thumbs", ThumbnailServlet.class.getName(), ht);
 	}
+	
+	
 
 
 	@Test
 	public void theThumbnailDirShouldBeCreated() throws MalformedURLException,
-			IOException, ServletException {
+			IOException, ServletException, ThumbnailNameException {
 
+		ServletUnitClient sc = sr.newClient();
+		WebRequest request = new GetMethodWebRequest("http://localhost/thumbs");
+		request.setParameter("img", "mySuperImage-120x94.png");
+
+		InvocationContext ic = sc.newInvocation(request);
+		ThumbnailServlet ts = (ThumbnailServlet) ic.getServlet();
+		
+		// relies on that the dir don't exist, hmm
+		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x94.png");
+		File dir = ts.setupThumbDirs(thumbnail);
+		
+		if (dir.exists())
+			dir.delete();
+		else
+			fail("Couldn't create dir:" + dir.getAbsolutePath());
 	}
 
 	@Test
