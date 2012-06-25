@@ -31,8 +31,14 @@ Bundled with Tomcat, set it up using and inctructions of how to start: https://g
 
 Also an expire filter is setup in the web.xml to set some cache headers (so make sure to empty your browser cache if you change images but keep the same name).
 
+If you want to run this in production, you need to think of a couple of things:
+<ol>
+<li>Change the original and thumbnail directories so they exists outside the webapp (you will probably want the images to live even if you redeploy :) )</li>
+<li>Make sure you set correct cache headers and add a layer in front of your servlet runner (nginx/apapche etc) that can cache the generated image</li>
+</ol>
+
 TODO:
-Cleanup & add more test cases ...
+Add test cases for the servlet
 
 # License
 
