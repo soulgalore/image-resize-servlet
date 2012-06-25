@@ -31,6 +31,7 @@ import javax.servlet.ServletException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.WebRequest;
@@ -43,8 +44,10 @@ public class WhenTheServletIsAccessed {
 	private ServletRunner sr;
 
 	@Before
-	public void setup() {
-		sr = new ServletRunner();
+	public void setup() throws IOException, SAXException {
+		
+		File webXml = new File("src/test/resources/WEB-INF/web.xml");
+		sr = new ServletRunner(webXml);
 		Hashtable<String, String> ht = new Hashtable<String, String>();
 		ht.put("valid-sizes", "460x360,220x172,120x94,80x62,800x626");
 		ht.put("thumbs-dir", "thumbs/");
@@ -54,8 +57,6 @@ public class WhenTheServletIsAccessed {
 		sr.registerServlet("thumbs", ThumbnailServlet.class.getName(), ht);
 	}
 	
-	
-
 
 	@Test
 	public void theThumbnailDirShouldBeCreated() throws MalformedURLException,
@@ -96,5 +97,23 @@ public class WhenTheServletIsAccessed {
 		assertFalse(ts.isSizeValid(invalidThumbNail));
 
 	}
+	
+	@Test
+	public void theOriginalImageShouldExistsAndTheThumbnailShouldNot() throws IOException,
+			ServletException, ThumbnailNameException {
+
+		ServletUnitClient sc = sr.newClient();
+		WebRequest request = new GetMethodWebRequest("http://localhost/thumbs");
+		request.setParameter("img", "test-120x94.png");
+
+		InvocationContext ic = sc.newInvocation(request);
+		ThumbnailServlet ts = (ThumbnailServlet) ic.getServlet();
+		Thumbnail thumbnail = new Thumbnail("test-120x94.png");
+		assertTrue(ts.doTheOriginalImageExist(thumbnail));
+		assertFalse(ts.doTheThumbnailExist(thumbnail));
+	
+	}
+	
+	
 
 }
