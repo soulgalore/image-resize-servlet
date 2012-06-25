@@ -46,12 +46,12 @@ public class WhenTheServletIsAccessed {
 	@Before
 	public void setup() throws IOException, SAXException {
 		
-		File webXml = new File("src/test/resources/WEB-INF/web.xml");
+		File webXml = new File("src/test/resources/webapp/WEB-INF/web.xml");
 		sr = new ServletRunner(webXml);
 		Hashtable<String, String> ht = new Hashtable<String, String>();
 		ht.put("valid-sizes", "460x360,220x172,120x94,80x62,800x626");
-		ht.put("thumbs-dir", "thumbs/");
-		ht.put("originals-dir", "originals/");
+		ht.put("thumbs-dir", "src/test/resources/webapp/thumbs/");
+		ht.put("originals-dir", "/src/test/resources/webapp/originals/");
 		ht.put("image-request-parameter-name", "img");
 
 		sr.registerServlet("thumbs", ThumbnailServlet.class.getName(), ht);
@@ -109,8 +109,8 @@ public class WhenTheServletIsAccessed {
 		InvocationContext ic = sc.newInvocation(request);
 		ThumbnailServlet ts = (ThumbnailServlet) ic.getServlet();
 		Thumbnail thumbnail = new Thumbnail("test-120x94.png");
-		assertTrue(ts.doTheOriginalImageExist(thumbnail));
-		assertFalse(ts.doTheThumbnailExist(thumbnail));
+		assertTrue("The orginal image should exist", ts.doTheOriginalImageExist(thumbnail));
+		assertFalse("The thumbnail should not exist", ts.doTheThumbnailExist(thumbnail));
 	
 	}
 	
