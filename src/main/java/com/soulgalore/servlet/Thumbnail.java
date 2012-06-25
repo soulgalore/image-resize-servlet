@@ -21,9 +21,15 @@
 package com.soulgalore.servlet;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 class Thumbnail {
 
+	/**
+	 * The regexp for the thumbnail name.
+	 */
+	protected static final String MATCHING_NAME_REGEXP = ".+\\-[0-9]+x[0-9]+\\.(png|jpg|jpeg|gif)";
+	
 	private static final int MASK = 255;
 	private static final int BYTE = 8;
 
@@ -33,13 +39,20 @@ class Thumbnail {
 	private final String imageFileExtension;
 	private final String imageDimensions;
 	private final String generatedFilePath;
+	private final Pattern pattern = Pattern
+			.compile(MATCHING_NAME_REGEXP);
 
 	/**
 	 * Create a thumbnail. Note will not check the file format.
 	 * 
 	 * @param theFileName
+	 * @throws ThumbnailNameException
 	 */
-	Thumbnail(String theFileName) {
+	Thumbnail(String theFileName) throws ThumbnailNameException {
+
+		if (theFileName == null || !pattern.matcher(theFileName).matches())
+			throw new ThumbnailNameException("The name: " + theFileName
+					+ " isn't valid");
 
 		imageFileName = theFileName;
 		originalImageName = imageFileName.substring(0,
