@@ -149,10 +149,10 @@ public class ThumbnailServlet extends HttpServlet {
 				validSizes.add(token.nextToken());
 			}
 		} else
-			System.out.println("Running " + this.getClass().getName()
+			System.out.println("Running " + getServletName()
 					+ " without configured valid "
 					+ "sizes, use the servlet init parameter "
-					+ INIT_PARAMETER_VALID_SIZES + " to set it up");
+					+ INIT_PARAMETER_VALID_SIZES + " to set it up.");
 
 		requestParameterName = config
 				.getInitParameter(INIT_PARAMETER_IMG_REQUEST_PARAMETER);
@@ -163,9 +163,8 @@ public class ThumbnailServlet extends HttpServlet {
 
 		originalBaseDir = getServletContext().getRealPath("/") + originalsDir;
 
-		System.out.println(this.getClass().getName() + " as "
-				+ config.getServletName()
-				+ " configured with request parameter name:"
+		System.out.println(getServletName()
+				+ " is configured with request parameter name:"
 				+ requestParameterName + " origiginalDir:" + originalsDir
 				+ " thumbDir:" + thumbsDir + " and valid sizes:"
 				+ (sizes == null ? "" : sizes));
@@ -175,32 +174,32 @@ public class ThumbnailServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		final String imageName = req.getParameter(requestParameterName);
+		Thumbnail thumbnail = null;
 
-		if (!isRequestValid(imageName, resp))
-			return;
-
-		final Thumbnail thumbnail = new Thumbnail(imageName);
-
-		if (!isSizeValid(thumbnail, resp))
-			return;
-
-		final String generatedPath = thumbnail.getGeneratedFilePath();
-
-		final File theImage = new File(originalBaseDir + generatedPath
-				+ imageName);
-
-		// does it exist?
-		if (theImage.exists()) {
-			// yes return it
-			returnTheImage(req, resp, generatedPath + imageName);
+		try {
+			thumbnail = new Thumbnail(req.getParameter(requestParameterName));
+		} catch (ThumbnailNameException e1) {
+			resp.sendError(
+					HttpServletResponse.SC_BAD_REQUEST,
+					"Thumbnail name isn't valid");
 			return;
 		}
 
-		final File originalFile = new File(originalBaseDir
-				+ thumbnail.getOriginalImageNameWithExtension());
+		if (!isSizeValid(thumbnail)) {
+			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
+					"Not a valid image size");
+			return;
+		}
 
-		if (!originalFile.exists()) {
+		// do the thumbnail exist?
+		if (doTheThumbnailExist(thumbnail)) {
+			// yes return it
+			returnTheThumbnail(req, resp, thumbnail);
+			return;
+		}
+
+		// do the original image exist
+		if (doTheOriginalImageExist(thumbnail)) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
 					"Requested non existing original image");
 			return;
@@ -208,11 +207,11 @@ public class ThumbnailServlet extends HttpServlet {
 
 		try {
 			setupThumbDirs(thumbnail);
-			
+
 			ThumbnailCreator.getInstance().createThumbnail(thumbnail,
 					originalBaseDir, destinationBaseDir);
 
-			returnTheImage(req, resp, generatedPath + imageName);
+			returnTheThumbnail(req, resp, thumbnail);
 			return;
 		} catch (IOException e) {
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -227,55 +226,80 @@ public class ThumbnailServlet extends HttpServlet {
 	}
 
 	/**
-	 * Validate a request. If the request isn't valid, this method will send a
-	 * error on the response.
+	 * Check if the thumbnail already exists.
 	 * 
-	 * @param filename
-	 * @param resp
-	 * @return true if the request is valid.
-	 * @throws IOException
+	 * @param thumbnail the thumbnail
+	 * @return true if the thumbnails exist
 	 */
-	private boolean isRequestValid(String filename, HttpServletResponse resp)
-			throws IOException {
+	protected boolean doTheThumbnailExist(Thumbnail thumbnail) {
+		final File theImageThumbnail = new File(originalBaseDir
+				+ thumbnail.getGeneratedFilePath()
+				+ thumbnail.getImageFileName());
 
-		if (filename == null) {
-			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-					"Missing parameter " + requestParameterName);
-			return false;
-		}
-
-		// TODO add regexp to verify filename standard
-
-		return true;
+		return theImageThumbnail.exists();
 	}
 
-	private boolean isSizeValid(Thumbnail thumbnail, HttpServletResponse resp)
-			throws IOException {
+	/**
+	 * Check if the original image exists.
+	 * 
+	 * @param thumbnail
+	 *            the thumbnail
+	 * @return true if it exists.
+	 */
+	protected boolean doTheOriginalImageExist(Thumbnail thumbnail) {
+		final File originalFile = new File(originalBaseDir
+				+ thumbnail.getOriginalImageNameWithExtension());
+		return originalFile.exists();
+	}
+
+	/**
+	 * Check if the size of the thumbnail is valid.
+	 * 
+	 * @param thumbnail
+	 *            the thumbnail
+	 * @return true if the size is valid.
+	 */
+	protected boolean isSizeValid(Thumbnail thumbnail) {
 
 		// skip validation if no sizes has been setup
 		if (validSizes.isEmpty())
 			return true;
-
-		final String size = thumbnail.getImageDimensions();
-
-		if (!validSizes.contains(size)) {
-			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-					"Not a valid image size:" + size);
+		else if (!validSizes.contains(thumbnail.getImageDimensions()))
 			return false;
-		} else
-			return true;
+		return true;
 
 	}
 
-	private void returnTheImage(HttpServletRequest req,
-			HttpServletResponse resp, String pathToFile)
+	/**
+	 * Return the thumbnail to the user.
+	 * 
+	 * @param req
+	 *            the request
+	 * @param resp
+	 *            the response
+	 * @param thumbnail 
+	 * 			  the thumbnail that will be returned
+	 * @throws ServletException
+	 *             if the thumbnail couldn't be delivered
+	 * @throws IOException
+	 *             if the thumbnail couldn't be delivered
+	 */
+	protected void returnTheThumbnail(HttpServletRequest req,
+			HttpServletResponse resp, Thumbnail thumbnail)
 			throws ServletException, IOException {
 		final RequestDispatcher rd = getServletContext().getRequestDispatcher(
-				"/" + thumbsDir + pathToFile);
+				"/" + thumbsDir + thumbnail.getGeneratedFilePath()
+						+ thumbnail.getImageFileName());
 		rd.forward(req, resp);
 	}
 
-	private void setupThumbDirs(Thumbnail thumbnail) {
+	/**
+	 * Setup the thumbnail dir if it doesn't exist.
+	 * 
+	 * @param thumbnail
+	 *            the thumbnail
+	 */
+	protected void setupThumbDirs(Thumbnail thumbnail) {
 
 		final File dir = new File(destinationBaseDir
 				+ thumbnail.getGeneratedFilePath());
