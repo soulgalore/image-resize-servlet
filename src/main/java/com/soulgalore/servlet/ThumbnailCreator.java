@@ -23,7 +23,7 @@ package com.soulgalore.servlet;
 import java.io.File;
 import java.io.IOException;
 
-class ThumbnailCreator {
+final class ThumbnailCreator {
 
 	private static final ThumbnailCreator INSTANCE = new ThumbnailCreator();
 
