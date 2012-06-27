@@ -18,7 +18,7 @@
  *
  *******************************************************
  */
-package com.soulgalore.servlet;
+package com.soulgalore.servlet.thumbnail;
 
 import java.io.File;
 import java.io.IOException;

@@ -18,7 +18,7 @@
  *
  *******************************************************
  */
-package com.soulgalore.servlet;
+package com.soulgalore.servlet.thumbnail;
 
 /**
  * Exception thrown if a Thumbnail is created with a non valid name.
