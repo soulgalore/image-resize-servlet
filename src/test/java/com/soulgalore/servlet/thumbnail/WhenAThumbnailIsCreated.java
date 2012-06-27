@@ -18,12 +18,15 @@
  *
  *******************************************************
  */
-package com.soulgalore.servlet;
+package com.soulgalore.servlet.thumbnail;
 
 import static org.junit.Assert.*;
 
 import static org.hamcrest.Matchers.is;
 import org.junit.Test;
+
+import com.soulgalore.servlet.thumbnail.Thumbnail;
+import com.soulgalore.servlet.thumbnail.ThumbnailNameException;
 
 public class WhenAThumbnailIsCreated {
 

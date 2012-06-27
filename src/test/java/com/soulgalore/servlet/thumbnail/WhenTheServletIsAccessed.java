@@ -18,7 +18,7 @@
  *
  *******************************************************
  */
-package com.soulgalore.servlet;
+package com.soulgalore.servlet.thumbnail;
 
 import static org.junit.Assert.*;
 
@@ -38,6 +38,9 @@ import com.meterware.httpunit.WebRequest;
 import com.meterware.servletunit.InvocationContext;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
+import com.soulgalore.servlet.thumbnail.Thumbnail;
+import com.soulgalore.servlet.thumbnail.ThumbnailNameException;
+import com.soulgalore.servlet.thumbnail.ThumbnailServlet;
 
 public class WhenTheServletIsAccessed {
 
