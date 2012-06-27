@@ -156,7 +156,16 @@
 							<configuration>
 								<configLocation>http://soulgalore.com/checkstyle.xml</configLocation>
 								<encoding>UTF-8</encoding>
-							</configuration>							
+
+							</configuration>
+							<!-- Fix for bug generating checkstyle runs twice, fixed for 2.9 -->
+							<reportSets>
+								<reportSet>
+									<reports>
+										<report>checkstyle</report>
+									</reports>
+								</reportSet>
+							</reportSets>
 						</plugin>
 					</reportPlugins>
 				</configuration>
