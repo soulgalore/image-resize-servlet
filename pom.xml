@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.soulgalore</groupId>
 	<artifactId>imagemagick-servlet</artifactId>
-	<version>0.3.0</version>
+	<version>0.8.0</version>
 	<name>ImageMagick example resize servlet</name>
 
 	<description>
@@ -43,6 +43,11 @@
 			<artifactId>webapp-runner</artifactId>
 			<version>7.0.27.1</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.tuckey</groupId>
+			<artifactId>urlrewritefilter</artifactId>
+			<version>4.0.2</version>
 		</dependency>
 		<!--Used for ServletUnit -->
 		<dependency>

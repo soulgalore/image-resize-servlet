@@ -4,10 +4,6 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
 
-	<welcome-file-list>
-		<welcome-file>index.jsp</welcome-file>
-	</welcome-file-list>
-
 	<!-- http://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/catalina/filters/ExpiresFilter.html -->
 	<filter>
 		<filter-name>ExpiresFilter</filter-name>
@@ -27,7 +23,36 @@
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
-	<servlet>
+	
+	
+	<filter>
+        <filter-name>UrlRewriteFilter</filter-name>
+        <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+
+        <!-- set the amount of seconds the conf file will be checked for reload
+        can be a valid integer (0 denotes check every time,
+        -1 denotes no reload check, default -1) -->
+        <init-param>
+            <param-name>confReloadCheckInterval</param-name>
+            <param-value>-1</param-value>
+        </init-param>
+  
+        <!-- you can disable status page if desired
+        can be: true, false (default true) -->
+        <init-param>
+            <param-name>statusEnabled</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>UrlRewriteFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    
+    <servlet>
 		<servlet-name>ThumbnailServlet</servlet-name>
 		<servlet-class>com.soulgalore.servlet.thumbnail.ThumbnailServlet</servlet-class>
 		<init-param>
@@ -38,7 +63,7 @@
 	   	<init-param>
 		<description>The base directory for the thumbnails</description>
    		<param-name>thumbs-dir</param-name>
-   		<param-value>thumbs</param-value>
+   		<param-value>thumbnails</param-value>
 	   </init-param>
 	   <init-param>
 		<description>The directory where the original images are located</description>
@@ -54,7 +79,7 @@
 
 	<servlet-mapping>
 		<servlet-name>ThumbnailServlet</servlet-name>
-		<url-pattern>/thumbs</url-pattern>
+		<url-pattern>/thumbnails</url-pattern>
 	</servlet-mapping>
 
 </web-app>
