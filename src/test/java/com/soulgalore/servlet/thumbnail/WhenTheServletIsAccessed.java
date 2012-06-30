@@ -20,6 +20,7 @@
  */
 package com.soulgalore.servlet.thumbnail;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 import java.io.File;
@@ -28,12 +29,14 @@ import java.net.MalformedURLException;
 import java.util.Hashtable;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
 import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.HttpException;
 import com.meterware.httpunit.WebRequest;
 import com.meterware.servletunit.InvocationContext;
 import com.meterware.servletunit.ServletRunner;
@@ -117,6 +120,74 @@ public class WhenTheServletIsAccessed {
 	
 	}
 	
+	@Test
+	public void wrongParameterShouldFail() throws SAXException, IOException {
+		ServletUnitClient sc = sr.newClient();
+		WebRequest request = new GetMethodWebRequest("http://localhost/thumbs");
+		request.setParameter("wrongParam", "test-120x94.png");
+
+		try {
+			sc.getResponse(request);
+			fail("Wrong parameter name should fail");
+		} catch (HttpException e) {
+			assertThat(e.getResponseCode(),
+					is(HttpServletResponse.SC_BAD_REQUEST));
+			assertThat(e.getResponseMessage(), is("Thumbnail name isn't valid"));
+		}
+	}
+
+	@Test
+	public void wrongSizeShouldFail() throws SAXException, IOException {
+		ServletUnitClient sc = sr.newClient();
+		WebRequest request = new GetMethodWebRequest("http://localhost/thumbs");
+		request.setParameter("img", "test-21220x941.png");
+
+		try {
+			sc.getResponse(request);
+			fail("Wrong size should fail");
+		} catch (HttpException e) {
+			assertThat(e.getResponseCode(),
+					is(HttpServletResponse.SC_BAD_REQUEST));
+			assertThat(e.getResponseMessage(), is("Not a valid image size"));
+		}
+
+	}
+
+	@Test
+	public void nonExistingOriginalImageShouldFail() throws SAXException,
+			IOException {
+		ServletUnitClient sc = sr.newClient();
+		WebRequest request = new GetMethodWebRequest("http://localhost/thumbs");
+		request.setParameter("img", "no-120x94.png");
+
+		try {
+			sc.getResponse(request);
+			fail("Non existing original image shoudl work");
+		} catch (HttpException e) {
+			assertThat(e.getResponseCode(),
+					is(HttpServletResponse.SC_BAD_REQUEST));
+			assertThat(e.getResponseMessage(),
+					is("Requested non existing original image"));
+		}
+
+	}
+
+	/*
+	 * TODO need to setup the last forward in configuration
+	@Test
+	public void rightParametersShouldWork() throws SAXException, IOException {
+		ServletUnitClient sc = sr.newClient();
+		WebRequest request = new GetMethodWebRequest("http://localhost/thumbs");
+		request.setParameter("img", "test-120x94.png");
+
+		try {
+			WebResponse wr = sc.getResponse(request);
+			assertThat(wr.getResponseCode(), is(HttpServletResponse.SC_OK));
+		} catch (HttpException e) {
+			fail("Right parameters should work:" + e.getResponseCode() + " " + e.getMessage());
+		}
+	}
+	*/
 	
 
 }
