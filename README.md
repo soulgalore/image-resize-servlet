@@ -1,4 +1,4 @@
-# Imagemagick resize servlet [![Build Status](https://secure.travis-ci.org/soulgalore/imagemagick-servlet.png?branch=master)](http://travis-ci.org/soulgalore/imagemagick-servlet)
+# Imagemagick resize servlet [![Build Status](https://secure.travis-ci.org/soulgalore/imagemagick-resize-servlet.png?branch=master)](http://travis-ci.org/soulgalore/imagemagick-resize-servlet)
 
 Resize an image using imagemagick (http://www.imagemagick.org/) from within a servlet. The servlet will resize an already existing original 
 image to one of the predefined desired sizes (or whatever size you want, depending on configuration).
@@ -12,7 +12,7 @@ image to one of the predefined desired sizes (or whatever size you want, dependi
 # How to make a test run in Eclipse
 <ol>
 <li>Checkout the project</li>
-<li>Make the project a Maven project </li>
+<li>Make the project a Maven project ("Convert to Maven project")</li>
 <li>Start the Tomcat using https://github.com/jsimone/webapp-runner#create-a-launch-configuration</li>
 <li>Access http://localhost:8080/thumbs/test-460x360.png and if you see the image, it works.</li>
 </ol>
