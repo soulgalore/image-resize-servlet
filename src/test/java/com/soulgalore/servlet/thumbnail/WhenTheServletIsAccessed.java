@@ -53,8 +53,8 @@ public class WhenTheServletIsAccessed {
 		sr = new ServletRunner(webXml);
 		Hashtable<String, String> ht = new Hashtable<String, String>();
 		ht.put("valid-sizes", "460x360,220x172,120x94,80x62,800x626");
-		ht.put("thumbs-dir", "src/test/resources/webapp/thumbs/");
-		ht.put("originals-dir", "/src/test/resources/webapp/originals/");
+		ht.put("thumbs-dir", "src/test/resources/webapp/thumbs");
+		ht.put("originals-dir", "/src/test/resources/webapp/originals");
 		ht.put("image-request-parameter-name", "img");
 
 		sr.registerServlet("thumbs", ThumbnailServlet.class.getName(), ht);
