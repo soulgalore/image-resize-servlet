@@ -27,7 +27,6 @@ final class ThumbnailCreator {
 
 	private static final ThumbnailCreator INSTANCE = new ThumbnailCreator();
 
-
 	private ThumbnailCreator() {
 
 	}
@@ -37,32 +36,33 @@ final class ThumbnailCreator {
 	 * 
 	 * @return the singleton instance.
 	 */
-	public static ThumbnailCreator getInstance() {
+	static ThumbnailCreator getInstance() {
 		return INSTANCE;
 	}
 
-	
 	/**
-	 * Create a resized thumbnail image from a original image, using imagemagick.
-	 * @param thumbnail 
+	 * Create a resized thumbnail image from a original image, using
+	 * imagemagick.
+	 * 
+	 * @param thumbnail
 	 * @param originalBaseDir
-	 * @param destinationBaseDir
+	 * @param destinationDir
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	void createThumbnail(Thumbnail thumbnail, String originalBaseDir, String destinationBaseDir)
-			throws InterruptedException, IOException {
-
+	void createThumbnail(Thumbnail thumbnail, String originalBaseDir,
+			String destinationDir) throws InterruptedException, IOException {
 
 		final ProcessBuilder pb = new ProcessBuilder("convert", "-thumbnail",
 				thumbnail.getImageDimensions(), originalBaseDir
+						+ File.separator
 						+ thumbnail.getOriginalImageNameWithExtension(),
-				destinationBaseDir + thumbnail.getGeneratedFilePath()
+				destinationDir + File.separator
 						+ thumbnail.getOriginalImageName() + "-"
 						+ thumbnail.getImageDimensions()
 						+ thumbnail.getImageFileExtension());
 
-		pb.directory(new File(originalBaseDir));
+	pb.directory(new File(originalBaseDir));
 		try {
 			final Process p = pb.start();
 			// wait until it's created
