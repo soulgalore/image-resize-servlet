@@ -137,7 +137,7 @@ public class WhenAThumbnailIsCreated {
 		Thumbnail thumb = new Thumbnail(thumbName);
 		creator.createThumbnail(thumb, originalsDir, originalsDir);
 		File destFile = new File(originalsDir + File.separator + thumbName);
-		assertTrue("The file doesn't exist:" + destFile.getAbsolutePath(), destFile.exists());
+		assertTrue("The thumbnail doesn't exist:" + destFile.getAbsolutePath(), destFile.exists());
 	}
 
 }
