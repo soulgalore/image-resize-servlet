@@ -1,11 +1,21 @@
 # Imagemagick resize servlet [![Build Status](https://secure.travis-ci.org/soulgalore/imagemagick-servlet.png?branch=master)](http://travis-ci.org/soulgalore/imagemagick-servlet)
 
-Super simple example for using imagemagick (http://www.imagemagick.org/) from within a servlet. The servlet will resize an already existing original 
+Resize an image using imagemagick (http://www.imagemagick.org/) from within a servlet. The servlet will resize an already existing original 
 image to one of the predefined desired sizes (or whatever size you want, depending on configuration).
 
 # What you need
-1. Imagemagick needs to be installed and the user of the servlet engine needs to have it on the path
-2. Simple as that :)
+<ol>
+<li>Imagemagick needs to be installed (http://www.imagemagick.org/script/binary-releases.php or by homebrew if you use Mac OS X) and the user of the servlet engine needs to have imagemagick on the path</li>
+<li> Simple as that :)</li>
+</ol>
+
+# How to make a test run in Eclipse
+<ol>
+<li>Checkout the project</li>
+<li>Make the project a Maven project </li>
+<li>Start the Tomcat using https://github.com/jsimone/webapp-runner#create-a-launch-configuration</li>
+<li>Access http://localhost:8080/thumbs/test-460x360.png and if you see the image, it works.</li>
+</ol>
 
 # How to use it
 
@@ -31,14 +41,13 @@ Bundled with Tomcat, set it up using and inctructions of how to start: https://g
 
 Also an expire filter is setup in the web.xml to set some cache headers (so make sure to empty your browser cache if you change images but keep the same name).
 
+Tuckeys url rewrite filter is used to setup a friendly url.
+
 If you want to run this in production, you need to think of a couple of things:
 <ol>
 <li>Change the original and thumbnail directories so they exists outside the webapp (you will probably want the images to live even if you redeploy :) )</li>
 <li>Make sure you set correct cache headers and add a layer in front of your servlet runner (Nginx/Apache etc) that can cache the generated image</li>
 </ol>
-
-TODO:
-Add test cases for the servlet
 
 # License
 
