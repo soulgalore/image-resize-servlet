@@ -175,6 +175,7 @@ public class ThumbnailServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
+	
 		Thumbnail thumbnail = null;
 
 		try {
@@ -218,6 +219,7 @@ public class ThumbnailServlet extends HttpServlet {
 			returnTheThumbnail(req, resp, thumbnail);
 			return;
 		} catch (IOException e) {
+			// TODO Could be that part of the response already has been sent
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					"Couldn't create thumbnail");
 			return;
