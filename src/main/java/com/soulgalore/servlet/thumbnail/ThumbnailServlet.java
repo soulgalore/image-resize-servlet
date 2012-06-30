@@ -200,7 +200,7 @@ public class ThumbnailServlet extends HttpServlet {
 		}
 
 		// do the original image exist
-		if (doTheOriginalImageExist(thumbnail)) {
+		if (!doTheOriginalImageExist(thumbnail)) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
 					"Requested non existing original image");
 			return;
@@ -209,8 +209,11 @@ public class ThumbnailServlet extends HttpServlet {
 		try {
 			setupThumbDirs(thumbnail);
 
-			ThumbnailCreator.getInstance().createThumbnail(thumbnail,
-					originalBaseDir, destinationBaseDir);
+			ThumbnailCreator.getInstance().createThumbnail(
+					thumbnail,
+					originalBaseDir,
+					destinationBaseDir + File.separator
+							+ thumbnail.getGeneratedFilePath());
 
 			returnTheThumbnail(req, resp, thumbnail);
 			return;
@@ -234,7 +237,7 @@ public class ThumbnailServlet extends HttpServlet {
 	 */
 	protected boolean doTheThumbnailExist(Thumbnail thumbnail) {
 		final File theImageThumbnail = new File(originalBaseDir
-				+ thumbnail.getGeneratedFilePath()
+				+ File.separator + thumbnail.getGeneratedFilePath()
 				+ thumbnail.getImageFileName());
 
 		return theImageThumbnail.exists();
@@ -248,7 +251,7 @@ public class ThumbnailServlet extends HttpServlet {
 	 * @return true if it exists.
 	 */
 	protected boolean doTheOriginalImageExist(Thumbnail thumbnail) {
-		final File originalFile = new File(originalBaseDir
+		final File originalFile = new File(originalBaseDir + File.separator
 				+ thumbnail.getOriginalImageNameWithExtension());
 		return originalFile.exists();
 	}
