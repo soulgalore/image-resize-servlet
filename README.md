@@ -49,6 +49,9 @@ If you want to run this in production, you need to think of a couple of things:
 <li>Make sure you set correct cache headers and add a layer in front of your servlet runner (Nginx/Apache etc) that can cache the generated image</li>
 </ol>
 
+# TODO
+Not tested on Windows ...
+
 # License
 
 Copyright 2012 Peter Hedenskog
