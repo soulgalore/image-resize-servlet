@@ -52,7 +52,6 @@ If you want to run this in production, you need to think of a couple of things:
 # TODO
 * Add better concurrent handling when creating the thumbnail
 * Not tested on Windows ...
-* Add JAI converter
 * Do some load test
 
 
