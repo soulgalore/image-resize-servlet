@@ -106,6 +106,27 @@ public class ThumbnailServlet extends HttpServlet {
 	private static final String INIT_PARAMETER_ORIGINAL_WEB_DIR = "originals-dir";
 
 	/**
+	 * Error message if the requested thumbnail name isn't valid.
+	 */
+	static final String ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID = "Thumbnail name isn't valid";
+	
+	/**
+	 * Error message if the requested thumbnail size isn't valid.
+	 */
+	static final String ERROR_MESSAGE_THUMBNAIL_SIZE_IS_NOT_VALID =  "Not a valid image size";
+	
+	/**
+	 * Error message if the requested thumbnail original doesn't exist.
+	 */
+	static final String ERROR_MESSAGE_ORIGINAL_IMAGE_DO_NOT_EXIST = "Requested non existing original image";
+	
+	/**
+	 * Error message if the requested thumbnail couldn't be created.
+	 * 
+	 */
+	static final String ERROR_MESSAGE_THUMBNAIL_NOT_CREATED =  "Couldn't create thumbnail";
+	
+	/**
 	 * The valid sizes of an image. Fetched from the servlet init parameter
 	 * {@link #INIT_PARAMETER_VALID_SIZES}. If the parameter is empty all sizes
 	 * can be created.
@@ -183,13 +204,13 @@ public class ThumbnailServlet extends HttpServlet {
 		} catch (ThumbnailNameException e1) {
 			resp.sendError(
 					HttpServletResponse.SC_BAD_REQUEST,
-					"Thumbnail name isn't valid");
+					ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID);
 			return;
 		}
 
 		if (!isSizeValid(thumbnail)) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-					"Not a valid image size");
+					ERROR_MESSAGE_THUMBNAIL_SIZE_IS_NOT_VALID);
 			return;
 		}
 
@@ -203,7 +224,7 @@ public class ThumbnailServlet extends HttpServlet {
 		// do the original image exist
 		if (!doTheOriginalImageExist(thumbnail)) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-					"Requested non existing original image");
+					ERROR_MESSAGE_ORIGINAL_IMAGE_DO_NOT_EXIST);
 			return;
 		}
 
@@ -224,11 +245,11 @@ public class ThumbnailServlet extends HttpServlet {
 		} catch (IOException e) {
 			// TODO Could be that part of the response already has been sent
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					"Couldn't create thumbnail");
+					ERROR_MESSAGE_THUMBNAIL_NOT_CREATED );
 			return;
 		} catch (InterruptedException e) {
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					"Couldn't create thumbnail");
+					ERROR_MESSAGE_THUMBNAIL_NOT_CREATED );
 			return;
 		}
 

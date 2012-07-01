@@ -51,7 +51,7 @@ public class WhenTheServletIsAccessed {
 
 	@Before
 	public void setup() throws IOException, SAXException {
-		
+
 		File webXml = new File("src/test/resources/webapp/WEB-INF/web.xml");
 		sr = new ServletRunner(webXml);
 		Hashtable<String, String> ht = new Hashtable<String, String>();
@@ -62,7 +62,6 @@ public class WhenTheServletIsAccessed {
 
 		sr.registerServlet("thumbs", ThumbnailServlet.class.getName(), ht);
 	}
-	
 
 	@Test
 	public void theThumbnailDirShouldBeCreated() throws MalformedURLException,
@@ -74,11 +73,11 @@ public class WhenTheServletIsAccessed {
 
 		InvocationContext ic = sc.newInvocation(request);
 		ThumbnailServlet ts = (ThumbnailServlet) ic.getServlet();
-		
+
 		// relies on that the dir don't exist, hmm
 		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x94.png");
 		File dir = ts.setupThumbDirs(thumbnail);
-		
+
 		if (dir.exists())
 			dir.delete();
 		else
@@ -103,10 +102,10 @@ public class WhenTheServletIsAccessed {
 		assertFalse(ts.isSizeValid(invalidThumbNail));
 
 	}
-	
+
 	@Test
-	public void theOriginalImageShouldExistsAndTheThumbnailShouldNot() throws IOException,
-			ServletException, ThumbnailNameException {
+	public void theOriginalImageShouldExistsAndTheThumbnailShouldNot()
+			throws IOException, ServletException, ThumbnailNameException {
 
 		ServletUnitClient sc = sr.newClient();
 		WebRequest request = new GetMethodWebRequest("http://localhost/thumbs");
@@ -115,11 +114,13 @@ public class WhenTheServletIsAccessed {
 		InvocationContext ic = sc.newInvocation(request);
 		ThumbnailServlet ts = (ThumbnailServlet) ic.getServlet();
 		Thumbnail thumbnail = new Thumbnail("test-120x94.png");
-		assertTrue("The orginal image should exist", ts.doTheOriginalImageExist(thumbnail));
-		assertFalse("The thumbnail should not exist", ts.doTheThumbnailExist(thumbnail));
-	
+		assertTrue("The orginal image should exist",
+				ts.doTheOriginalImageExist(thumbnail));
+		assertFalse("The thumbnail should not exist",
+				ts.doTheThumbnailExist(thumbnail));
+
 	}
-	
+
 	@Test
 	public void wrongParameterShouldFail() throws SAXException, IOException {
 		ServletUnitClient sc = sr.newClient();
@@ -132,7 +133,8 @@ public class WhenTheServletIsAccessed {
 		} catch (HttpException e) {
 			assertThat(e.getResponseCode(),
 					is(HttpServletResponse.SC_BAD_REQUEST));
-			assertThat(e.getResponseMessage(), is("Thumbnail name isn't valid"));
+			assertThat(e.getResponseMessage(),
+					is(ThumbnailServlet.ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID));
 		}
 	}
 
@@ -148,7 +150,8 @@ public class WhenTheServletIsAccessed {
 		} catch (HttpException e) {
 			assertThat(e.getResponseCode(),
 					is(HttpServletResponse.SC_BAD_REQUEST));
-			assertThat(e.getResponseMessage(), is("Not a valid image size"));
+			assertThat(e.getResponseMessage(),
+					is(ThumbnailServlet.ERROR_MESSAGE_THUMBNAIL_SIZE_IS_NOT_VALID));
 		}
 
 	}
@@ -167,27 +170,23 @@ public class WhenTheServletIsAccessed {
 			assertThat(e.getResponseCode(),
 					is(HttpServletResponse.SC_BAD_REQUEST));
 			assertThat(e.getResponseMessage(),
-					is("Requested non existing original image"));
+					is(ThumbnailServlet.ERROR_MESSAGE_ORIGINAL_IMAGE_DO_NOT_EXIST));
 		}
 
 	}
 
 	/*
 	 * TODO need to setup the last forward in configuration
-	@Test
-	public void rightParametersShouldWork() throws SAXException, IOException {
-		ServletUnitClient sc = sr.newClient();
-		WebRequest request = new GetMethodWebRequest("http://localhost/thumbs");
-		request.setParameter("img", "test-120x94.png");
-
-		try {
-			WebResponse wr = sc.getResponse(request);
-			assertThat(wr.getResponseCode(), is(HttpServletResponse.SC_OK));
-		} catch (HttpException e) {
-			fail("Right parameters should work:" + e.getResponseCode() + " " + e.getMessage());
-		}
-	}
-	*/
-	
+	 * 
+	 * @Test public void rightParametersShouldWork() throws SAXException,
+	 * IOException { ServletUnitClient sc = sr.newClient(); WebRequest request =
+	 * new GetMethodWebRequest("http://localhost/thumbs");
+	 * request.setParameter("img", "test-120x94.png");
+	 * 
+	 * try { WebResponse wr = sc.getResponse(request);
+	 * assertThat(wr.getResponseCode(), is(HttpServletResponse.SC_OK)); } catch
+	 * (HttpException e) { fail("Right parameters should work:" +
+	 * e.getResponseCode() + " " + e.getMessage()); } }
+	 */
 
 }
