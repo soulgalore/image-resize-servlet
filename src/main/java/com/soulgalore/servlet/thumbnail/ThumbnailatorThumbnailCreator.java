@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import net.coobird.thumbnailator.Thumbnails;
 /**
- * Backend ussing Thumbnailator.
+ * Backend using Thumbnailator.
  * http://code.google.com/p/thumbnailator/
  *
  */
