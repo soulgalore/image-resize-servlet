@@ -207,10 +207,13 @@ public class ThumbnailServlet extends HttpServlet {
 			return;
 		}
 
+		// TODO fix some concurrency handling 
 		try {
 			setupThumbDirs(thumbnail);
 
-			ThumbnailCreator.getInstance().createThumbnail(
+			// TODO guice me
+			ThumbnailCreator creator = new ImageMagickThumbnailCreator();
+			creator.createThumbnail(
 					thumbnail,
 					originalBaseDir,
 					destinationBaseDir + File.separator
