@@ -49,6 +49,9 @@ public class WhenTheServletIsAccessed {
 
 	private ServletRunner sr;
 
+	private final static String originalDir ="src/test/resources/webapp/originals";
+	private final static String thumbsDir ="src/test/resources/webapp/thumbs";
+	
 	@Before
 	public void setup() throws IOException, SAXException {
 
@@ -56,8 +59,8 @@ public class WhenTheServletIsAccessed {
 		sr = new ServletRunner(webXml);
 		Hashtable<String, String> ht = new Hashtable<String, String>();
 		ht.put("valid-sizes", "460x360,220x172,120x94,80x62,800x626");
-		ht.put("thumbs-dir", "src/test/resources/webapp/thumbs");
-		ht.put("originals-dir", "/src/test/resources/webapp/originals");
+		ht.put("thumbs-dir", thumbsDir);
+		ht.put("originals-dir",originalDir);
 		ht.put("image-request-parameter-name", "img");
 
 		sr.registerServlet("thumbs", ThumbnailServlet.class.getName(), ht);
@@ -75,8 +78,8 @@ public class WhenTheServletIsAccessed {
 		ThumbnailServlet ts = (ThumbnailServlet) ic.getServlet();
 
 		// relies on that the dir don't exist, hmm
-		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x94.png");
-		File dir = ts.setupThumbDirs(thumbnail);
+		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x94.png", originalDir, thumbsDir);
+		File dir = new File(thumbnail.getDestinationDir());
 
 		if (dir.exists())
 			dir.delete();
@@ -95,10 +98,10 @@ public class WhenTheServletIsAccessed {
 		InvocationContext ic = sc.newInvocation(request);
 		ThumbnailServlet ts = (ThumbnailServlet) ic.getServlet();
 
-		Thumbnail validThumbNail = new Thumbnail("mySuperImage-120x94.png");
+		Thumbnail validThumbNail = new Thumbnail("mySuperImage-120x94.png", originalDir, thumbsDir);
 		assertTrue(ts.isSizeValid(validThumbNail));
 
-		Thumbnail invalidThumbNail = new Thumbnail("mySuperImage-120x941.png");
+		Thumbnail invalidThumbNail = new Thumbnail("mySuperImage-120x941.png", originalDir, thumbsDir);
 		assertFalse(ts.isSizeValid(invalidThumbNail));
 
 	}
@@ -113,7 +116,7 @@ public class WhenTheServletIsAccessed {
 
 		InvocationContext ic = sc.newInvocation(request);
 		ThumbnailServlet ts = (ThumbnailServlet) ic.getServlet();
-		Thumbnail thumbnail = new Thumbnail("test-120x94.png");
+		Thumbnail thumbnail = new Thumbnail("test-120x94.png", originalDir, thumbsDir);
 		assertTrue("The orginal image should exist",
 				ts.doTheOriginalImageExist(thumbnail));
 		assertFalse("The thumbnail should not exist",

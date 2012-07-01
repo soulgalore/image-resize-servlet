@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -157,6 +158,7 @@ public class ThumbnailServlet extends HttpServlet {
 	 * The base dir where the thumbnails will be created.
 	 */
 	private String destinationBaseDir;
+	
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -200,10 +202,10 @@ public class ThumbnailServlet extends HttpServlet {
 		Thumbnail thumbnail = null;
 
 		try {
-			thumbnail = new Thumbnail(req.getParameter(requestParameterName));
+			thumbnail = new Thumbnail(req.getParameter(requestParameterName),
+					originalBaseDir, destinationBaseDir);
 		} catch (ThumbnailNameException e1) {
-			resp.sendError(
-					HttpServletResponse.SC_BAD_REQUEST,
+			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
 					ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID);
 			return;
 		}
@@ -229,29 +231,20 @@ public class ThumbnailServlet extends HttpServlet {
 		}
 
 		// TODO fix some concurrency handling 
-		try {
-			setupThumbDirs(thumbnail);
-
+		try {		
 			// TODO guice me
 			ThumbnailCreator creator = new ImageMagickThumbnailCreator();
 			creator.createThumbnail(
-					thumbnail,
-					originalBaseDir,
-					destinationBaseDir + File.separator
-							+ thumbnail.getGeneratedFilePath());
+					thumbnail);
 
 			returnTheThumbnail(req, resp, thumbnail);
 			return;
-		} catch (IOException e) {
+		} catch (IOException | InterruptedException e) {
 			// TODO Could be that part of the response already has been sent
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					ERROR_MESSAGE_THUMBNAIL_NOT_CREATED );
 			return;
-		} catch (InterruptedException e) {
-			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					ERROR_MESSAGE_THUMBNAIL_NOT_CREATED );
-			return;
-		}
+		} 
 
 	}
 
@@ -262,8 +255,7 @@ public class ThumbnailServlet extends HttpServlet {
 	 * @return true if the thumbnails exist
 	 */
 	protected boolean doTheThumbnailExist(Thumbnail thumbnail) {
-		final File theImageThumbnail = new File(originalBaseDir
-				+ File.separator + thumbnail.getGeneratedFilePath()
+		final File theImageThumbnail = new File(thumbnail.getDestinationDir()
 				+ thumbnail.getImageFileName());
 
 		return theImageThumbnail.exists();
@@ -277,7 +269,7 @@ public class ThumbnailServlet extends HttpServlet {
 	 * @return true if it exists.
 	 */
 	protected boolean doTheOriginalImageExist(Thumbnail thumbnail) {
-		final File originalFile = new File(originalBaseDir + File.separator
+		final File originalFile = new File(thumbnail.getOriginalBaseDir() + File.separator
 				+ thumbnail.getOriginalImageNameWithExtension());
 		return originalFile.exists();
 	}
@@ -321,28 +313,6 @@ public class ThumbnailServlet extends HttpServlet {
 				"/" + thumbsDir + thumbnail.getGeneratedFilePath()
 						+ thumbnail.getImageFileName());
 		rd.forward(req, resp);
-	}
-
-	/**
-	 * Setup the thumbnail dir if it doesn't exist.
-	 * 
-	 * @param thumbnail
-	 *            the thumbnail
-	 * @return the dir           
-	 */
-	protected File setupThumbDirs(Thumbnail thumbnail) {
-
-		final File dir = new File(destinationBaseDir
-				+ thumbnail.getGeneratedFilePath());
-
-		// bad error handling
-		if (!dir.exists()) {
-			if (!dir.mkdirs())
-				System.err.println("Couldn't create dir:"
-						+ dir.getAbsolutePath());
-		}
-		
-		return dir;
 	}
 
 }

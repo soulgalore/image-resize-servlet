@@ -39,6 +39,8 @@ class Thumbnail {
 	private final String imageFileExtension;
 	private final String imageDimensions;
 	private final String generatedFilePath;
+	private final String originalBaseDir;
+	private final  String destinationDir;
 	private final Pattern pattern = Pattern
 			.compile(MATCHING_NAME_REGEXP);
 
@@ -48,7 +50,7 @@ class Thumbnail {
 	 * @param theFileName
 	 * @throws ThumbnailNameException
 	 */
-	Thumbnail(String theFileName) throws ThumbnailNameException {
+	Thumbnail(String theFileName, String originalBaseDir, String destinationDir) throws ThumbnailNameException {
 
 		if (theFileName == null || !pattern.matcher(theFileName).matches())
 			throw new ThumbnailNameException("The name: " + theFileName
@@ -64,8 +66,25 @@ class Thumbnail {
 				imageFileName.lastIndexOf("."));
 		originalImageNameWithExtension = originalImageName + imageFileExtension;
 		generatedFilePath = createFilePath();
+		this.originalBaseDir = originalBaseDir;
+		this.destinationDir = destinationDir + File.separator + generatedFilePath;
+		
+		final File dir = new File(this.destinationDir);
+		
+		if (!dir.exists()) {
+			if (!dir.mkdirs())
+				System.err.println("Couldn't create dir:"
+						+ dir.getAbsolutePath());
+		}
 	}
 
+	String getOriginalBaseDir() {
+		return originalBaseDir;
+	}
+	
+	String getDestinationDir() {
+		return destinationDir;
+	}
 	/**
 	 * Get the generated the file path, will always use the original filename,
 	 * so that all sizes of one file end up in one directory.
@@ -124,7 +143,11 @@ class Thumbnail {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result
+				+ ((destinationDir == null) ? 0 : destinationDir.hashCode());
+		result = prime * result
 				+ ((imageFileName == null) ? 0 : imageFileName.hashCode());
+		result = prime * result
+				+ ((originalBaseDir == null) ? 0 : originalBaseDir.hashCode());
 		return result;
 	}
 
@@ -136,13 +159,25 @@ class Thumbnail {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final Thumbnail other = (Thumbnail) obj;
+		Thumbnail other = (Thumbnail) obj;
+		if (destinationDir == null) {
+			if (other.destinationDir != null)
+				return false;
+		} else if (!destinationDir.equals(other.destinationDir))
+			return false;
 		if (imageFileName == null) {
 			if (other.imageFileName != null)
 				return false;
 		} else if (!imageFileName.equals(other.imageFileName))
 			return false;
+		if (originalBaseDir == null) {
+			if (other.originalBaseDir != null)
+				return false;
+		} else if (!originalBaseDir.equals(other.originalBaseDir))
+			return false;
 		return true;
 	}
+
+	
 
 }

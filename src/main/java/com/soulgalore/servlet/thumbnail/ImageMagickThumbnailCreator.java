@@ -25,36 +25,40 @@ import java.io.IOException;
 
 /**
  * Image magick backend for creating thumbnails.
- *
+ * 
  */
 public class ImageMagickThumbnailCreator implements ThumbnailCreator {
-
 
 	public ImageMagickThumbnailCreator() {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see com.soulgalore.servlet.thumbnail.ThumbnailCreator#createThumbnail(com.soulgalore.servlet.thumbnail.Thumbnail, java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.soulgalore.servlet.thumbnail.ThumbnailCreator#createThumbnail(com
+	 * .soulgalore.servlet.thumbnail.Thumbnail, java.lang.String,
+	 * java.lang.String)
 	 */
 	@Override
-	public void createThumbnail(Thumbnail thumbnail, String originalBaseDir,
-			String destinationDir) throws InterruptedException, IOException {
+	public File createThumbnail(Thumbnail thumbnail)
+			throws InterruptedException, IOException {
 
 		final ProcessBuilder pb = new ProcessBuilder("convert", "-thumbnail",
-				thumbnail.getImageDimensions(), originalBaseDir
+				thumbnail.getImageDimensions(), thumbnail.getOriginalBaseDir()
 						+ File.separator
 						+ thumbnail.getOriginalImageNameWithExtension(),
-				destinationDir + File.separator
-						+ thumbnail.getOriginalImageName() + "-"
-						+ thumbnail.getImageDimensions()
-						+ thumbnail.getImageFileExtension());
+				thumbnail.getDestinationDir() + File.separator
+						+ thumbnail.getImageFileName());
 
-	pb.directory(new File(originalBaseDir));
+		pb.directory(new File(thumbnail.getOriginalBaseDir()));
 		try {
 			final Process p = pb.start();
 			// wait until it's created
 			p.waitFor();
+			return new File(thumbnail.getDestinationDir() + File.separator
+					+ thumbnail.getImageFileName());
 
 		} catch (IOException e1) {
 			throw e1;

@@ -20,6 +20,7 @@
  */
 package com.soulgalore.servlet.thumbnail;
 
+import java.io.File;
 import java.io.IOException;
 
 interface ThumbnailCreator {
@@ -29,13 +30,12 @@ interface ThumbnailCreator {
 	 * will be of the same type as the original image.
 	 * 
 	 * @param thumbnail
-	 * @param originalBaseDir
-	 * @param destinationDir
+	 * @return the thumbnail file
 	 * @throws InterruptedException
 	 * @throws IOException
+	 * 
 	 */
-	public void createThumbnail(Thumbnail thumbnail,
-			String originalBaseDir, String destinationDir)
+	public File createThumbnail(Thumbnail thumbnail)
 			throws InterruptedException, IOException;
 
 }
