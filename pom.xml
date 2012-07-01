@@ -74,6 +74,13 @@
 			<version>1.2.1</version>
 			<scope>test</scope>
 		</dependency>
+	<!-- Alternative thumbnail backend -->
+	<dependency>
+		<groupId>net.coobird</groupId>
+		<artifactId>thumbnailator</artifactId>
+		<version>0.4.2</version>
+	</dependency>
+		
 	</dependencies>
 
 	<build>
