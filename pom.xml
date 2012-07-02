@@ -2,12 +2,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.soulgalore</groupId>
-	<artifactId>imagemagick-servlet</artifactId>
-	<version>0.8.0</version>
-	<name>ImageMagick example resize servlet</name>
+	<artifactId>image-resize-servlet</artifactId>
+	<version>0.9.1-SNAPSHOT</version>
+	<name>Image resize servlet</name>
 
 	<description>
-    Example servlet for resizing images on demand using imagemagick.
+    Servlet for resizing images on demand using imagemagick or thumbnailator.
     </description>
 
 	<developers>
@@ -31,9 +31,9 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:git://github.com/soulgalore/imagemagick-servlet.git</connection>
-		<developerConnection>scm:git:git@github.com:soulgalore/imagemagick-servlet.git</developerConnection>
-		<url>https://github.com/soulgalore/imagemagick-servlet/</url>
+		<connection>scm:git:git://github.com/soulgalore/image-resize-servlet.git</connection>
+		<developerConnection>scm:git:git@github.com:soulgalore/image-resize-servlet.git</developerConnection>
+		<url>https://github.com/soulgalore/image-resize-servlet/</url>
 	</scm>
 
 	<dependencies>
@@ -74,6 +74,14 @@
 			<version>1.2.1</version>
 			<scope>test</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>12.0</version>
+			<scope>compile</scope>
+		</dependency>
+		
 	<!-- Alternative thumbnail backend -->
 	<dependency>
 		<groupId>net.coobird</groupId>
