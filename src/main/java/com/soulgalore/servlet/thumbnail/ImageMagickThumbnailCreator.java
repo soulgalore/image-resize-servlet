@@ -22,29 +22,25 @@ package com.soulgalore.servlet.thumbnail;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Image magick backend for creating thumbnails.
  * 
  */
-public class ImageMagickThumbnailCreator implements ThumbnailCreator {
+public class ImageMagickThumbnailCreator implements
+		Callable<File> {
 
-	public ImageMagickThumbnailCreator() {
-
+	private final Thumbnail thumbnail;
+	
+	public ImageMagickThumbnailCreator(Thumbnail thumb) {
+		thumbnail = thumb;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.soulgalore.servlet.thumbnail.ThumbnailCreator#createThumbnail(com
-	 * .soulgalore.servlet.thumbnail.Thumbnail, java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public File createThumbnail(Thumbnail thumbnail)
-			throws InterruptedException, IOException {
 
+	@Override
+	public File call() throws Exception {
 		final ProcessBuilder pb = new ProcessBuilder("convert", "-thumbnail",
 				thumbnail.getImageDimensions(), thumbnail.getOriginalBaseDir()
 						+ File.separator
@@ -57,11 +53,12 @@ public class ImageMagickThumbnailCreator implements ThumbnailCreator {
 			final Process p = pb.start();
 			// wait until it's created
 			p.waitFor();
-			return new File(thumbnail.getDestinationDir() + File.separator
-					+ thumbnail.getImageFileName());
 
-		} catch (IOException e1) {
-			throw e1;
+		} catch (IOException e) {
+			throw e;
 		}
+
+		return new File(thumbnail.getDestinationDir() + File.separator
+				+ thumbnail.getImageFileName());
 	}
 }
