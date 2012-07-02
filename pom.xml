@@ -74,21 +74,35 @@
 			<version>1.2.1</version>
 			<scope>test</scope>
 		</dependency>
-		
+
+		<!-- simple to use the cache -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>12.0</version>
 			<scope>compile</scope>
 		</dependency>
-		
-	<!-- Alternative thumbnail backend -->
-	<dependency>
-		<groupId>net.coobird</groupId>
-		<artifactId>thumbnailator</artifactId>
-		<version>0.4.2</version>
-	</dependency>
-		
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.4</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Alternative thumbnail backend -->
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>0.4.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
