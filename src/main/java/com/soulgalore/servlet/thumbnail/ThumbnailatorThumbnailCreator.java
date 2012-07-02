@@ -22,6 +22,7 @@ package com.soulgalore.servlet.thumbnail;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 import net.coobird.thumbnailator.Thumbnails;
 
@@ -29,11 +30,16 @@ import net.coobird.thumbnailator.Thumbnails;
  * Backend using Thumbnailator. http://code.google.com/p/thumbnailator/
  * 
  */
-public class ThumbnailatorThumbnailCreator implements ThumbnailCreator {
+public class ThumbnailatorThumbnailCreator implements Callable<File> {
+
+	private final Thumbnail thumbnail;
+
+	public ThumbnailatorThumbnailCreator(Thumbnail thumb) {
+		thumbnail = thumb;
+	}
 
 	@Override
-	public File createThumbnail(Thumbnail thumbnail)
-			throws InterruptedException, IOException {
+	public File call() throws Exception {
 
 		final int x = Integer.valueOf(thumbnail.getImageDimensions().substring(
 				0, thumbnail.getImageDimensions().indexOf("x")));
@@ -41,12 +47,16 @@ public class ThumbnailatorThumbnailCreator implements ThumbnailCreator {
 				thumbnail.getImageDimensions().indexOf("x") + 1,
 				thumbnail.getImageDimensions().length()));
 
-		Thumbnails
-				.of(thumbnail.getOriginalBaseDir() + File.separator
-						+ thumbnail.getOriginalImageNameWithExtension())
-				.size(x, y)
-				.toFile(thumbnail.getDestinationDir() + File.separator
-						+ thumbnail.getImageFileName());
+		try {
+			Thumbnails
+					.of(thumbnail.getOriginalBaseDir() + File.separator
+							+ thumbnail.getOriginalImageNameWithExtension())
+					.size(x, y)
+					.toFile(thumbnail.getDestinationDir() + File.separator
+							+ thumbnail.getImageFileName());
+		} catch (IOException e) {
+			throw e;
+		}
 
 		return new File(thumbnail.getDestinationDir() + File.separator
 				+ thumbnail.getImageFileName());
