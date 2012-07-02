@@ -23,7 +23,6 @@ package com.soulgalore.servlet.thumbnail;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Image magick backend for creating thumbnails.
