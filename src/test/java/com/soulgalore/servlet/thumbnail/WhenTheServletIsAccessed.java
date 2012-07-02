@@ -25,7 +25,6 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
@@ -40,7 +39,6 @@ import org.xml.sax.SAXException;
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.HttpException;
 import com.meterware.httpunit.WebRequest;
-import com.meterware.servletunit.InvocationContext;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
 import com.soulgalore.servlet.thumbnail.Thumbnail;

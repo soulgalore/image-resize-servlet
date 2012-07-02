@@ -33,10 +33,6 @@ import javax.servlet.ServletException;
 import static org.hamcrest.Matchers.is;
 import org.junit.Test;
 
-import com.meterware.httpunit.GetMethodWebRequest;
-import com.meterware.httpunit.WebRequest;
-import com.meterware.servletunit.InvocationContext;
-import com.meterware.servletunit.ServletUnitClient;
 import com.soulgalore.servlet.thumbnail.Thumbnail;
 import com.soulgalore.servlet.thumbnail.ThumbnailException;
 
