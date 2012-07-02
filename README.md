@@ -36,6 +36,8 @@ The servlet will check if the image already exist in the requested size.  If the
 original image exist (named MY_ORIGINAL_IMAGE.png) and that the requested thumbnail size is valid (you can configure valid size or say that all sizes are valid)
 . If the request is valid, a new thumbnail is resized and put in your configured thumbnail base dir + a generated folder path that is calculated from the original file name, so that files are spread within the file system (but all sizes for a specific file, are within the same folder). Then the new image is returned to the user. 
 
+The calling thread is the thread that creates the actual thumbnail and it is concurrent in the meaning only one thread can create the same thumbnail.
+
 # Extras
 Bundled with Tomcat, set it up using and inctructions of how to start: https://github.com/jsimone/webapp-runner 
 
@@ -46,11 +48,11 @@ Tuckeys url rewrite filter is used to setup a friendly url.
 If you want to run this in production, you need to think of a couple of things:
 <ol>
 <li>Change the original and thumbnail directories so they exists outside the webapp (you will probably want the images to live even if you redeploy :) )</li>
-<li>Make sure you set correct cache headers and add a layer in front of your servlet runner (Nginx/Apache etc) that can cache the generated image</li>
+<li>Make sure you set correct cache headers and add a layer in front of your servlet runner (Nginx/Apache etc) that can cache the generated image. </li>
+<li>Configure your logging backend for slf4j.
 </ol>
 
 # TODO
-* Add logging
 * Not tested on Windows ...
 
 
