@@ -209,6 +209,9 @@ public class ThumbnailServlet extends HttpServlet {
 
 		final String thumbnailName = req.getParameter(requestParameterName);
 
+		if (logger.isDebugEnabled())
+			logger.debug("Get thumbnail named {}", thumbnailName);
+		
 		if (thumbnailName == null) {
 			if (logger.isDebugEnabled())
 				logger.debug("Accessed with no thumbnail name");
