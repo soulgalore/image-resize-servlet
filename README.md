@@ -50,9 +50,9 @@ If you want to run this in production, you need to think of a couple of things:
 </ol>
 
 # TODO
-* Add better concurrent handling when creating the thumbnail
+* Add logging
 * Not tested on Windows ...
-* Do some load test
+
 
 
 # License
