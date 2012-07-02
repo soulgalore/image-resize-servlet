@@ -26,7 +26,9 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Set;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
@@ -42,16 +44,16 @@ import com.meterware.servletunit.InvocationContext;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
 import com.soulgalore.servlet.thumbnail.Thumbnail;
-import com.soulgalore.servlet.thumbnail.ThumbnailNameException;
+import com.soulgalore.servlet.thumbnail.ThumbnailException;
 import com.soulgalore.servlet.thumbnail.ThumbnailServlet;
 
 public class WhenTheServletIsAccessed {
 
 	private ServletRunner sr;
 
-	private final static String originalDir ="src/test/resources/webapp/originals";
-	private final static String thumbsDir ="src/test/resources/webapp/thumbs";
-	
+	private final static String originalDir = "src/test/resources/webapp/originals";
+	private final static String thumbsDir = "src/test/resources/webapp/thumbs";
+
 	@Before
 	public void setup() throws IOException, SAXException {
 
@@ -60,68 +62,10 @@ public class WhenTheServletIsAccessed {
 		Hashtable<String, String> ht = new Hashtable<String, String>();
 		ht.put("valid-sizes", "460x360,220x172,120x94,80x62,800x626");
 		ht.put("thumbs-dir", thumbsDir);
-		ht.put("originals-dir",originalDir);
+		ht.put("originals-dir", originalDir);
 		ht.put("image-request-parameter-name", "img");
 
 		sr.registerServlet("thumbs", ThumbnailServlet.class.getName(), ht);
-	}
-
-	@Test
-	public void theThumbnailDirShouldBeCreated() throws MalformedURLException,
-			IOException, ServletException, ThumbnailNameException {
-
-		ServletUnitClient sc = sr.newClient();
-		WebRequest request = new GetMethodWebRequest("http://localhost/thumbs");
-		request.setParameter("img", "mySuperImage-120x94.png");
-
-		InvocationContext ic = sc.newInvocation(request);
-		ThumbnailServlet ts = (ThumbnailServlet) ic.getServlet();
-
-		// relies on that the dir don't exist, hmm
-		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x94.png", originalDir, thumbsDir);
-		File dir = new File(thumbnail.getDestinationDir());
-
-		if (dir.exists())
-			dir.delete();
-		else
-			fail("Couldn't create dir:" + dir.getAbsolutePath());
-	}
-
-	@Test
-	public void theImageSizeShouldBeTested() throws MalformedURLException,
-			IOException, ServletException, ThumbnailNameException {
-
-		ServletUnitClient sc = sr.newClient();
-		WebRequest request = new GetMethodWebRequest("http://localhost/thumbs");
-		request.setParameter("img", "mySuperImage-120x94.png");
-
-		InvocationContext ic = sc.newInvocation(request);
-		ThumbnailServlet ts = (ThumbnailServlet) ic.getServlet();
-
-		Thumbnail validThumbNail = new Thumbnail("mySuperImage-120x94.png", originalDir, thumbsDir);
-		assertTrue(ts.isSizeValid(validThumbNail));
-
-		Thumbnail invalidThumbNail = new Thumbnail("mySuperImage-120x941.png", originalDir, thumbsDir);
-		assertFalse(ts.isSizeValid(invalidThumbNail));
-
-	}
-
-	@Test
-	public void theOriginalImageShouldExistsAndTheThumbnailShouldNot()
-			throws IOException, ServletException, ThumbnailNameException {
-
-		ServletUnitClient sc = sr.newClient();
-		WebRequest request = new GetMethodWebRequest("http://localhost/thumbs");
-		request.setParameter("img", "test-120x94.png");
-
-		InvocationContext ic = sc.newInvocation(request);
-		ThumbnailServlet ts = (ThumbnailServlet) ic.getServlet();
-		Thumbnail thumbnail = new Thumbnail("test-120x94.png", originalDir, thumbsDir);
-		assertTrue("The orginal image should exist",
-				ts.doTheOriginalImageExist(thumbnail));
-		assertFalse("The thumbnail should not exist",
-				ts.doTheThumbnailExist(thumbnail));
-
 	}
 
 	@Test
@@ -136,7 +80,8 @@ public class WhenTheServletIsAccessed {
 		} catch (HttpException e) {
 			assertThat(e.getResponseCode(),
 					is(HttpServletResponse.SC_BAD_REQUEST));
-			assertThat(e.getResponseMessage(),
+			assertThat(
+					e.getResponseMessage(),
 					is(ThumbnailServlet.ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID));
 		}
 	}
@@ -153,7 +98,8 @@ public class WhenTheServletIsAccessed {
 		} catch (HttpException e) {
 			assertThat(e.getResponseCode(),
 					is(HttpServletResponse.SC_BAD_REQUEST));
-			assertThat(e.getResponseMessage(),
+			assertThat(
+					e.getResponseMessage(),
 					is(ThumbnailServlet.ERROR_MESSAGE_THUMBNAIL_SIZE_IS_NOT_VALID));
 		}
 
@@ -168,13 +114,29 @@ public class WhenTheServletIsAccessed {
 
 		try {
 			sc.getResponse(request);
-			fail("Non existing original image shoudl work");
+			fail("Non existing original image should work");
 		} catch (HttpException e) {
 			assertThat(e.getResponseCode(),
 					is(HttpServletResponse.SC_BAD_REQUEST));
-			assertThat(e.getResponseMessage(),
+			assertThat(
+					e.getResponseMessage(),
 					is(ThumbnailServlet.ERROR_MESSAGE_ORIGINAL_IMAGE_DO_NOT_EXIST));
 		}
+
+	}
+	
+	
+	@Test
+	public void theOriginalImageShouldExis()
+			throws IOException, ServletException, ThumbnailException {
+
+		Set<String> validSizes = new HashSet<String>();
+		validSizes.add("120x94");
+		ThumbnailFactory getter = new ThumbnailFactory(originalDir, thumbsDir,
+				validSizes);
+		Thumbnail thumbnail = new Thumbnail("test-120x94.png", originalDir, thumbsDir);
+		assertTrue("The orginal image should exist",
+				getter.doTheOriginalImageExist(thumbnail));
 
 	}
 

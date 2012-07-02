@@ -31,14 +31,15 @@ import org.junit.Test;
 public class WhenAThumbnailIsCreatedByImageMagick {
 
 	@Test
-	public void theFileShouldBeCreated() throws ThumbnailNameException, InterruptedException, IOException {
-		ThumbnailCreator creator = new ImageMagickThumbnailCreator();
+	public void theFileShouldBeCreated() throws Exception {
+		
 		URL url = this.getClass().getResource("/webapp/originals/");
 		File testPng = new File(url.getFile());
 		String originalsDir = testPng.getPath();
 		String thumbName = "test-120x94.png";
 		Thumbnail thumb = new Thumbnail(thumbName, originalsDir, originalsDir);
-		File destFile = creator.createThumbnail(thumb);
+		ImageMagickThumbnailCreator creator = new ImageMagickThumbnailCreator(thumb);
+		File destFile = creator.call();
 		assertTrue("The thumbnail doesn't exist:" + destFile.getAbsolutePath(), destFile.exists());
 	}
 

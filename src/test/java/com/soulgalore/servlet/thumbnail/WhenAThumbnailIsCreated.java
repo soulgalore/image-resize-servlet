@@ -22,27 +22,39 @@ package com.soulgalore.servlet.thumbnail;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.servlet.ServletException;
+
 import static org.hamcrest.Matchers.is;
 import org.junit.Test;
 
+import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.WebRequest;
+import com.meterware.servletunit.InvocationContext;
+import com.meterware.servletunit.ServletUnitClient;
 import com.soulgalore.servlet.thumbnail.Thumbnail;
-import com.soulgalore.servlet.thumbnail.ThumbnailNameException;
+import com.soulgalore.servlet.thumbnail.ThumbnailException;
 
 public class WhenAThumbnailIsCreated {
 
-	private final static String originalDir ="/src/test/resources/webapp/originals";
+	private final static String originalDir ="src/test/resources/webapp/originals";
 	private final static String thumbsDir ="src/test/resources/webapp/thumbs";
 	
 	
 	@Test
 	public void theGeneratedFilePathShouldNotBeNull()
-			throws ThumbnailNameException {
+			throws ThumbnailException {
 		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x29.png", originalDir, thumbsDir);
 		assertNotNull(thumbnail.getGeneratedFilePath());
 	}
 
 	@Test
-	public void thetImageDimensionsAreRight() throws ThumbnailNameException {
+	public void thetImageDimensionsAreRight() throws ThumbnailException {
 
 		String dimensions = "120x29";
 		Thumbnail thumbnail = new Thumbnail("mySuperImage-" + dimensions
@@ -56,13 +68,13 @@ public class WhenAThumbnailIsCreated {
 	}
 
 	@Test
-	public void theFileNameShouldBeRight() throws ThumbnailNameException {
+	public void theFileNameShouldBeRight() throws ThumbnailException {
 		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x29.png", originalDir, thumbsDir);
 		assertThat(thumbnail.getImageFileName(), is("mySuperImage-120x29.png"));
 	}
 
 	@Test
-	public void theOriginalNameShouldBeRight() throws ThumbnailNameException {
+	public void theOriginalNameShouldBeRight() throws ThumbnailException {
 		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x29.png", originalDir, thumbsDir);
 		assertThat(thumbnail.getOriginalImageName(), is("mySuperImage"));
 
@@ -73,7 +85,7 @@ public class WhenAThumbnailIsCreated {
 
 	@Test
 	public void theOriginalFullnameShouldBeRight()
-			throws ThumbnailNameException {
+			throws ThumbnailException {
 		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x29.png", originalDir, thumbsDir);
 		assertThat(thumbnail.getOriginalImageNameWithExtension(),
 				is("mySuperImage.png"));
@@ -85,7 +97,7 @@ public class WhenAThumbnailIsCreated {
 	}
 
 	@Test
-	public void theFileEndingShoukdBeRight() throws ThumbnailNameException {
+	public void theFileEndingShoukdBeRight() throws ThumbnailException {
 		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x29.png",originalDir, thumbsDir);
 		assertThat(thumbnail.getImageFileExtension(), is(".png"));
 
@@ -100,32 +112,64 @@ public class WhenAThumbnailIsCreated {
 		try {
 			new Thumbnail("mySuperImage-.png",originalDir, thumbsDir);
 			fail("Missing dimensions should fail");
-		} catch (ThumbnailNameException e) {
+		} catch (ThumbnailException e) {
 		}
 
 		try {
 			new Thumbnail("mySuperImage-120x29.", originalDir, thumbsDir);
 			fail("Missing file extension should fail");
-		} catch (ThumbnailNameException e) {
+		} catch (ThumbnailException e) {
 		}
 
 		try {
 			new Thumbnail("mySuperImage120x29.jpg", originalDir, thumbsDir);
 			fail("Missing - should fail");
-		} catch (ThumbnailNameException e) {
+		} catch (ThumbnailException e) {
 		}
 		try {
 			new Thumbnail("-120x29.jpg", originalDir, thumbsDir);
 			fail("Missing name should fail");
-		} catch (ThumbnailNameException e) {
+		} catch (ThumbnailException e) {
 		}
 		try {
 			new Thumbnail(null, originalDir, thumbsDir);
 			fail("Missing name should fail");
-		} catch (ThumbnailNameException e) {
+		} catch (ThumbnailException e) {
 		}
 
 	}
 	
+	@Test
+	public void theImageSizeShouldBeTested() throws MalformedURLException,
+			IOException, ServletException, ThumbnailException {
+
+		Set<String> validSizes = new HashSet<String>();
+		validSizes.add("120x94");
+		ThumbnailFactory factory = new ThumbnailFactory(originalDir, thumbsDir,
+				validSizes);
+		
+
+		Thumbnail validThumbNail = new Thumbnail("mySuperImage-120x94.png", originalDir, thumbsDir);
+		assertTrue(factory.isSizeValid(validThumbNail));
+
+		Thumbnail invalidThumbNail = new Thumbnail("mySuperImage-120x941.png", originalDir, thumbsDir);
+		assertFalse(factory.isSizeValid(invalidThumbNail));
+
+	}
+	
+	
+	
+	@Test
+	public void theThumbnailDirShouldBeCreated() throws ThumbnailException {
+		// relies on that the dir don't exist, hmm
+		Thumbnail thumbnail = new Thumbnail("mySuperImage-120x94.png", originalDir, thumbsDir);
+		File dir = new File(thumbnail.getDestinationDir());
+
+		if (dir.exists())
+			dir.delete();
+		else
+			fail("Couldn't create dir:" + dir.getAbsolutePath());
+	}
+
 	
 }
