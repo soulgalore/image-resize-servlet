@@ -42,9 +42,8 @@ import com.google.common.cache.CacheBuilder;
 
 /**
  * <p>
- * A resize image servlet, that can resize an image on
- * demand. Will resize an already existing original image to different
- * configured size(s).
+ * A resize image servlet, that can resize an image on demand. Will resize an
+ * already existing original image to different configured size(s).
  * 
  * User scenario:
  * </p>
@@ -58,9 +57,9 @@ import com.google.common.cache.CacheBuilder;
  * <li>The servlet will check if that size of the image already exist on disk,
  * if it exist, it will be returned.
  * <li>
- * <li>If the images don't exist, the thumbnail of the requested size will be created. The creation 
- * is done by the calling thread but is concurrent safem meaning only one thread can create the same 
- * thumbnail</li>
+ * <li>If the images don't exist, the thumbnail of the requested size will be
+ * created. The creation is done by the calling thread but is concurrent safem
+ * meaning only one thread can create the same thumbnail</li>
  * <li>The image is returned</li>
  * </ol>
  * 
@@ -132,15 +131,16 @@ public class ThumbnailServlet extends HttpServlet {
 	private static final String INIT_PARAMETER_VALID_SIZES = "valid-sizes";
 
 	private static final long serialVersionUID = -2092311650388075782L;
-	
+
 	/**
-	 * Only a number to make sure thumbnails aren't created more than once (at a time).
+	 * Only a number to make sure thumbnails aren't created more than once (at a
+	 * time).
 	 */
-	private static final int CACHE_MAX_SIZE = 10000;	
+	private static final int CACHE_MAX_SIZE = 10000;
 
 	private final transient Logger logger = LoggerFactory
 			.getLogger(ThumbnailServlet.class);
-	
+
 	/**
 	 * Cache.
 	 */
@@ -166,7 +166,6 @@ public class ThumbnailServlet extends HttpServlet {
 	 * Web thumbnail directory.
 	 */
 	private String thumbsDir;
-	
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -211,7 +210,7 @@ public class ThumbnailServlet extends HttpServlet {
 
 		if (logger.isDebugEnabled())
 			logger.debug("Get thumbnail named {}", thumbnailName);
-		
+
 		if (thumbnailName == null) {
 			if (logger.isDebugEnabled())
 				logger.debug("Accessed with no thumbnail name");
