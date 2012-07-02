@@ -23,13 +23,15 @@ package com.soulgalore.servlet.thumbnail;
 import java.io.File;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Objects;
+
 class Thumbnail {
 
 	/**
 	 * The regexp for the thumbnail name.
 	 */
 	protected static final String MATCHING_NAME_REGEXP = ".+\\-[0-9]+x[0-9]+\\.(png|jpg|jpeg|gif)";
-	
+
 	private static final int MASK = 255;
 	private static final int BYTE = 8;
 
@@ -40,21 +42,22 @@ class Thumbnail {
 	private final String imageDimensions;
 	private final String generatedFilePath;
 	private final String originalBaseDir;
-	private final  String destinationDir;
-	private final Pattern pattern = Pattern
-			.compile(MATCHING_NAME_REGEXP);
+	private final String destinationDir;
+	private final Pattern pattern = Pattern.compile(MATCHING_NAME_REGEXP);
+
 
 	/**
 	 * Create a thumbnail. Note will not check the file format.
 	 * 
 	 * @param theFileName
-	 * @throws ThumbnailNameException
+	 * @throws ThumbnailException
 	 */
-	Thumbnail(String theFileName, String originalBaseDir, String destinationDir) throws ThumbnailNameException {
+	Thumbnail(String theFileName, String originalBaseDir, String destinationDir)
+			throws ThumbnailException {
 
 		if (theFileName == null || !pattern.matcher(theFileName).matches())
-			throw new ThumbnailNameException("The name: " + theFileName
-					+ " isn't valid");
+			throw new ThumbnailException(
+					ThumbnailServlet.ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID);
 
 		imageFileName = theFileName;
 		originalImageName = imageFileName.substring(0,
@@ -67,10 +70,11 @@ class Thumbnail {
 		originalImageNameWithExtension = originalImageName + imageFileExtension;
 		generatedFilePath = createFilePath();
 		this.originalBaseDir = originalBaseDir;
-		this.destinationDir = destinationDir + File.separator + generatedFilePath;
-		
+		this.destinationDir = destinationDir + File.separator
+				+ generatedFilePath;
+
 		final File dir = new File(this.destinationDir);
-		
+
 		if (!dir.exists()) {
 			if (!dir.mkdirs())
 				System.err.println("Couldn't create dir:"
@@ -81,10 +85,11 @@ class Thumbnail {
 	String getOriginalBaseDir() {
 		return originalBaseDir;
 	}
-	
+
 	String getDestinationDir() {
 		return destinationDir;
 	}
+
 	/**
 	 * Get the generated the file path, will always use the original filename,
 	 * so that all sizes of one file end up in one directory.
@@ -178,6 +183,11 @@ class Thumbnail {
 		return true;
 	}
 
-	
-
+	@Override
+	public String toString() {
+		return Objects.toStringHelper(this).add("imageFileName", imageFileName)
+				.add("imageDimensions",imageDimensions)
+				.add("originalBaseDir", originalBaseDir)
+				.add("destinationDir", destinationDir).toString();
+	}
 }
