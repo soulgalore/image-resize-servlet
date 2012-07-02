@@ -23,6 +23,9 @@ package com.soulgalore.servlet.thumbnail;
 import java.io.File;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Objects;
 
 class Thumbnail {
@@ -44,6 +47,9 @@ class Thumbnail {
 	private final String originalBaseDir;
 	private final String destinationDir;
 	private final Pattern pattern = Pattern.compile(MATCHING_NAME_REGEXP);
+	
+	private final Logger logger = LoggerFactory
+			.getLogger(Thumbnail.class);
 
 
 	/**
@@ -52,7 +58,7 @@ class Thumbnail {
 	 * @param theFileName
 	 * @throws ThumbnailException
 	 */
-	Thumbnail(String theFileName, String originalBaseDir, String destinationDir)
+	Thumbnail(String theFileName, String theOriginalBaseDir, String theDestinationBaseDir)
 			throws ThumbnailException {
 
 		if (theFileName == null || !pattern.matcher(theFileName).matches())
@@ -69,16 +75,16 @@ class Thumbnail {
 				imageFileName.lastIndexOf("."));
 		originalImageNameWithExtension = originalImageName + imageFileExtension;
 		generatedFilePath = createFilePath();
-		this.originalBaseDir = originalBaseDir;
-		this.destinationDir = destinationDir + File.separator
+		originalBaseDir = theOriginalBaseDir;
+		destinationDir = theDestinationBaseDir + File.separator
 				+ generatedFilePath;
 
-		final File dir = new File(this.destinationDir);
+		final File dir = new File(destinationDir);
 
 		if (!dir.exists()) {
 			if (!dir.mkdirs())
-				System.err.println("Couldn't create dir:"
-						+ dir.getAbsolutePath());
+				logger.error("Couldn't create dir {}",
+						dir.getAbsolutePath());
 		}
 	}
 
@@ -164,7 +170,7 @@ class Thumbnail {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Thumbnail other = (Thumbnail) obj;
+		final Thumbnail other = (Thumbnail) obj;
 		if (destinationDir == null) {
 			if (other.destinationDir != null)
 				return false;
@@ -186,8 +192,9 @@ class Thumbnail {
 	@Override
 	public String toString() {
 		return Objects.toStringHelper(this).add("imageFileName", imageFileName)
-				.add("imageDimensions",imageDimensions)
+				.add("imageDimensions", imageDimensions)
 				.add("originalBaseDir", originalBaseDir)
 				.add("destinationDir", destinationDir).toString();
+
 	}
 }

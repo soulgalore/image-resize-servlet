@@ -24,17 +24,29 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.coobird.thumbnailator.Thumbnails;
 
 /**
  * Backend using Thumbnailator. http://code.google.com/p/thumbnailator/
  * 
  */
-public class ThumbnailatorThumbnailCreator implements Callable<File> {
+class ThumbnailatorThumbnailCreator implements Callable<File> {
 
 	private final Thumbnail thumbnail;
 
-	public ThumbnailatorThumbnailCreator(Thumbnail thumb) {
+	private final Logger logger = LoggerFactory
+			.getLogger(ThumbnailatorThumbnailCreator.class);
+
+	/**
+	 * Create a thumbnail creator.
+	 * 
+	 * @param thumb
+	 *            the thumbnail that will be created.
+	 */
+	ThumbnailatorThumbnailCreator(Thumbnail thumb) {
 		thumbnail = thumb;
 	}
 
@@ -54,12 +66,14 @@ public class ThumbnailatorThumbnailCreator implements Callable<File> {
 					.size(x, y)
 					.toFile(thumbnail.getDestinationDir() + File.separator
 							+ thumbnail.getImageFileName());
+			return new File(thumbnail.getDestinationDir() + File.separator
+					+ thumbnail.getImageFileName());
+
 		} catch (IOException e) {
+			if (logger.isErrorEnabled())
+				logger.error("Couldn't create thumbnail", e);
 			throw e;
 		}
-
-		return new File(thumbnail.getDestinationDir() + File.separator
-				+ thumbnail.getImageFileName());
 
 	}
 

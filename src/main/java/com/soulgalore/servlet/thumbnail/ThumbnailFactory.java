@@ -23,6 +23,10 @@ package com.soulgalore.servlet.thumbnail;
 import java.io.File;
 import java.util.Set;
 
+/**
+ * Create a thumbnail.
+ *
+ */
 public class ThumbnailFactory {
 
 	/**
@@ -42,7 +46,6 @@ public class ThumbnailFactory {
 	 */
 	private final Set<String> validSizes;
 
-
 	ThumbnailFactory(String theOriginalBaseDir, String theDestinationBaseDir,
 			Set<String> theValidSizes) {
 		originalBaseDir = theOriginalBaseDir;
@@ -50,9 +53,15 @@ public class ThumbnailFactory {
 		validSizes = theValidSizes;
 	}
 
-	public Thumbnail get(String fileName) throws ThumbnailException {
+	/**
+	 * Get a thumbnail object.
+	 * @param fileName the name of the thumbnail
+	 * @return the thumbnail
+	 * @throws ThumbnailException if the size isn't valid or the original image doesn't exist
+	 */
+	Thumbnail get(String fileName) throws ThumbnailException {
 
-		Thumbnail thumbnail = new Thumbnail(fileName, originalBaseDir,
+		final Thumbnail thumbnail = new Thumbnail(fileName, originalBaseDir,
 				destinationBaseDir);
 
 		if (!isSizeValid(thumbnail))

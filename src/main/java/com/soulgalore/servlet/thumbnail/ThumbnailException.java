@@ -30,7 +30,6 @@ class ThumbnailException extends Exception {
 
 	private final String reason;
 
-	
 	ThumbnailException(String theReason) {
 		super();
 		reason = theReason;			

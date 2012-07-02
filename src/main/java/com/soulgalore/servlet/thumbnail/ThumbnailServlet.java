@@ -34,12 +34,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 /**
  * <p>
- * Example of a image-magick resize image servlet, that can resize an image on
+ * A resize image servlet, that can resize an image on
  * demand. Will resize an already existing original image to different
  * configured size(s).
  * 
@@ -51,11 +54,13 @@ import com.google.common.cache.CacheBuilder;
  * format of {@link Thumbnail#MATCHING_NAME_REGEXP}</li>
  * <li>The servlet will check if the original image exist (named
  * MY_ORIGINAL_IMAGE.png in this example), meaning it is a valid request</li>
- * <li>if the new size is configured in {@link #validSizes}, the image can</li>
+ * <li>if the new size is configured, the image can</li>
  * <li>The servlet will check if that size of the image already exist on disk,
  * if it exist, it will be returned.
  * <li>
- * <li>If the images don't exist, the size will be created using image-magick</li>
+ * <li>If the images don't exist, the thumbnail of the requested size will be created. The creation 
+ * is done by the calling thread but is concurrent safem meaning only one thread can create the same 
+ * thumbnail</li>
  * <li>The image is returned</li>
  * </ol>
  * 
@@ -75,8 +80,7 @@ import com.google.common.cache.CacheBuilder;
  * </p>
  * 
  * <p>
- * No cache header is added within the servlet. Note also that the imagemagick
- * needs to be in the path of the user that's starts the servlet runner.
+ * No cache header is added within the servlet.
  * </p>
  * 
  * 
@@ -85,44 +89,15 @@ import com.google.common.cache.CacheBuilder;
  */
 public class ThumbnailServlet extends HttpServlet {
 
-	private static final long serialVersionUID = -2092311650388075782L;
-
 	/**
-	 * The name of the servlet init parameter for valid image sizes.
+	 * Error message if the requested thumbnail original doesn't exist.
 	 */
-	private static final String INIT_PARAMETER_VALID_SIZES = "valid-sizes";
-
-	/**
-	 * The name of the servlet init parameter for the request parameter.
-	 */
-	private static final String INIT_PARAMETER_IMG_REQUEST_PARAMETER = "image-request-parameter-name";
-
-	/**
-	 * The name of the servlet init parameter for the base dir for thumbnail
-	 * images.
-	 */
-	private static final String INIT_PARAMETER_THUMB_WEB_DIR = "thumbs-dir";
-
-	/**
-	 * The name of the servlet init parameter for where the original images are
-	 * located.
-	 */
-	private static final String INIT_PARAMETER_ORIGINAL_WEB_DIR = "originals-dir";
+	static final String ERROR_MESSAGE_ORIGINAL_IMAGE_DO_NOT_EXIST = "Requested non existing original image";
 
 	/**
 	 * Error message if the requested thumbnail name isn't valid.
 	 */
 	static final String ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID = "Thumbnail name isn't valid";
-
-	/**
-	 * Error message if the requested thumbnail size isn't valid.
-	 */
-	static final String ERROR_MESSAGE_THUMBNAIL_SIZE_IS_NOT_VALID = "Not a valid image size";
-
-	/**
-	 * Error message if the requested thumbnail original doesn't exist.
-	 */
-	static final String ERROR_MESSAGE_ORIGINAL_IMAGE_DO_NOT_EXIST = "Requested non existing original image";
 
 	/**
 	 * Error message if the requested thumbnail couldn't be created.
@@ -131,9 +106,52 @@ public class ThumbnailServlet extends HttpServlet {
 	static final String ERROR_MESSAGE_THUMBNAIL_NOT_CREATED = "Couldn't create thumbnail";
 
 	/**
-	 * Web thumbnail directory.
+	 * Error message if the requested thumbnail size isn't valid.
 	 */
-	private String thumbsDir;
+	static final String ERROR_MESSAGE_THUMBNAIL_SIZE_IS_NOT_VALID = "Not a valid image size";
+
+	/**
+	 * The name of the servlet init parameter for the request parameter.
+	 */
+	private static final String INIT_PARAMETER_IMG_REQUEST_PARAMETER = "image-request-parameter-name";
+
+	/**
+	 * The name of the servlet init parameter for where the original images are
+	 * located.
+	 */
+	private static final String INIT_PARAMETER_ORIGINAL_WEB_DIR = "originals-dir";
+	/**
+	 * The name of the servlet init parameter for the base dir for thumbnail
+	 * images.
+	 */
+	private static final String INIT_PARAMETER_THUMB_WEB_DIR = "thumbs-dir";
+
+	/**
+	 * The name of the servlet init parameter for valid image sizes.
+	 */
+	private static final String INIT_PARAMETER_VALID_SIZES = "valid-sizes";
+
+	private static final long serialVersionUID = -2092311650388075782L;
+	
+	/**
+	 * Only a number to make sure thumbnails aren't created more than once (at a time).
+	 */
+	private static final int CACHE_MAX_SIZE = 10000;	
+
+	private final transient Logger logger = LoggerFactory
+			.getLogger(ThumbnailServlet.class);
+	
+	/**
+	 * Cache.
+	 */
+	private final Cache<Thumbnail, File> cache = CacheBuilder.newBuilder()
+			.maximumSize(CACHE_MAX_SIZE).build();
+
+	/**
+	 * The factory classes, used to create thumbnail objects.
+	 */
+	private transient ThumbnailFactory factory;
+
 	/**
 	 * Directory for originals.
 	 */
@@ -144,18 +162,15 @@ public class ThumbnailServlet extends HttpServlet {
 	 */
 	private String requestParameterName;
 
-	private ThumbnailFactory factory;
-
 	/**
-	 * Cache
+	 * Web thumbnail directory.
 	 */
-	private Cache<Thumbnail, File> cache;
+	private String thumbsDir;
+	
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-
-		cache = CacheBuilder.newBuilder().maximumSize(10000).build();
 
 		final String sizes = config
 				.getInitParameter(INIT_PARAMETER_VALID_SIZES);
@@ -167,7 +182,7 @@ public class ThumbnailServlet extends HttpServlet {
 				validSizes.add(token.nextToken());
 			}
 		} else
-			System.out.println("Running " + getServletName()
+			logger.info("Running " + getServletName()
 					+ " without configured valid "
 					+ "sizes, use the servlet init parameter "
 					+ INIT_PARAMETER_VALID_SIZES + " to set it up.");
@@ -181,7 +196,7 @@ public class ThumbnailServlet extends HttpServlet {
 				+ originalsDir, getServletContext()
 				.getRealPath("/" + thumbsDir), validSizes);
 
-		System.out.println(getServletName()
+		logger.info(getServletName()
 				+ " is configured with request parameter name:"
 				+ requestParameterName + " origiginalDir:" + originalsDir
 				+ " thumbDir:" + thumbsDir + " and valid sizes:"
@@ -192,39 +207,63 @@ public class ThumbnailServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 
-		String thumbnailName = req.getParameter(requestParameterName);
+		final String thumbnailName = req.getParameter(requestParameterName);
 
 		if (thumbnailName == null) {
+			if (logger.isDebugEnabled())
+				logger.debug("Accessed with no thumbnail name");
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
 					ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID);
 			return;
 		}
 
 		try {
-			Thumbnail thumbnail = factory.get(thumbnailName);
+			final Thumbnail thumbnail = factory.get(thumbnailName);
 
 			if (!doTheThumbnailExist(thumbnail)) {
 
 				try {
-					// used to make sure only one thread creates the actual thumbnail
-					File file = cache.get(thumbnail,
-							new ImageMagickThumbnailCreator(thumbnail));
+					// used to make sure only one thread creates the actual
+					// thumbnail
+					cache.get(thumbnail, new ImageMagickThumbnailCreator(
+							thumbnail));
 				} catch (ExecutionException e) {
+					if (logger.isErrorEnabled())
+						logger.error("Couldn't create thumbnail", e.getCause());
 					resp.sendError(
 							HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 							ERROR_MESSAGE_THUMBNAIL_NOT_CREATED);
+					return;
 				}
-		}
+			}
 			returnTheThumbnail(req, resp, thumbnail);
 		} catch (ThumbnailException e1) {
+			if (logger.isDebugEnabled())
+				logger.debug("Thumbnail not created beacuse {}", e1.getReason());
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e1.getReason());
 			return;
 		} catch (IOException e) {
+			if (logger.isErrorEnabled())
+				logger.error("Couldn't create thumbnail", e);
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					ERROR_MESSAGE_THUMBNAIL_NOT_CREATED);
 			return;
 		}
 
+	}
+
+	/**
+	 * Check if the thumbnail already exists.
+	 * 
+	 * @param thumbnail
+	 *            the thumbnail
+	 * @return true if the thumbnails exist
+	 */
+	protected boolean doTheThumbnailExist(Thumbnail thumbnail) {
+		final File theImageThumbnail = new File(thumbnail.getDestinationDir()
+				+ thumbnail.getImageFileName());
+
+		return theImageThumbnail.exists();
 	}
 
 	/**
@@ -248,19 +287,5 @@ public class ThumbnailServlet extends HttpServlet {
 				"/" + thumbsDir + thumbnail.getGeneratedFilePath()
 						+ thumbnail.getImageFileName());
 		rd.forward(req, resp);
-	}
-
-	/**
-	 * Check if the thumbnail already exists.
-	 * 
-	 * @param thumbnail
-	 *            the thumbnail
-	 * @return true if the thumbnails exist
-	 */
-	protected boolean doTheThumbnailExist(Thumbnail thumbnail) {
-		final File theImageThumbnail = new File(thumbnail.getDestinationDir()
-				+ thumbnail.getImageFileName());
-
-		return theImageThumbnail.exists();
 	}
 }

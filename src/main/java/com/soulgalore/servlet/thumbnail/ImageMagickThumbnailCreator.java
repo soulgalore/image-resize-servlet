@@ -24,19 +24,29 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Image magick backend for creating thumbnails.
  * 
  */
-public class ImageMagickThumbnailCreator implements
-		Callable<File> {
+class ImageMagickThumbnailCreator implements Callable<File> {
 
 	private final Thumbnail thumbnail;
-	
-	public ImageMagickThumbnailCreator(Thumbnail thumb) {
+
+	private final Logger logger = LoggerFactory
+			.getLogger(ImageMagickThumbnailCreator.class);
+
+	/**
+	 * Create a thumbnail creator.
+	 * 
+	 * @param thumb
+	 *            the thumbnail that will be created.
+	 */
+	ImageMagickThumbnailCreator(Thumbnail thumb) {
 		thumbnail = thumb;
 	}
-
 
 	@Override
 	public File call() throws Exception {
@@ -48,16 +58,20 @@ public class ImageMagickThumbnailCreator implements
 						+ thumbnail.getImageFileName());
 
 		pb.directory(new File(thumbnail.getOriginalBaseDir()));
+		
 		try {
 			final Process p = pb.start();
 			// wait until it's created
 			p.waitFor();
 
+			return new File(thumbnail.getDestinationDir() + File.separator
+					+ thumbnail.getImageFileName());
+
 		} catch (IOException e) {
+			if (logger.isErrorEnabled())
+				logger.error("Couldn't create thumbnail", e);
 			throw e;
 		}
 
-		return new File(thumbnail.getDestinationDir() + File.separator
-				+ thumbnail.getImageFileName());
 	}
 }
