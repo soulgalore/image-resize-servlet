@@ -84,7 +84,7 @@ class Thumbnail {
 
 		if (theFileName == null || !pattern.matcher(theFileName).matches())
 			throw new ThumbnailException(
-					Thumbnail.ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID);
+					ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID);
 
 		imageFileName = theFileName;
 		originalImageName = imageFileName.substring(0,
@@ -104,8 +104,12 @@ class Thumbnail {
 
 		if (!dir.exists()) {
 			if (!dir.mkdirs())
+			{
 				logger.error("Couldn't create dir {}",
 						dir.getAbsolutePath());
+				throw new ThumbnailException(
+						ERROR_MESSAGE_THUMBNAIL_NOT_CREATED);
+			}
 		}
 	}
 
