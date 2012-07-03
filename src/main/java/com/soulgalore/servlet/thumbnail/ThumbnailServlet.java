@@ -89,27 +89,6 @@ import com.google.common.cache.CacheBuilder;
 public class ThumbnailServlet extends HttpServlet {
 
 	/**
-	 * Error message if the requested thumbnail original doesn't exist.
-	 */
-	static final String ERROR_MESSAGE_ORIGINAL_IMAGE_DO_NOT_EXIST = "Requested non existing original image";
-
-	/**
-	 * Error message if the requested thumbnail name isn't valid.
-	 */
-	static final String ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID = "Thumbnail name isn't valid";
-
-	/**
-	 * Error message if the requested thumbnail couldn't be created.
-	 * 
-	 */
-	static final String ERROR_MESSAGE_THUMBNAIL_NOT_CREATED = "Couldn't create thumbnail";
-
-	/**
-	 * Error message if the requested thumbnail size isn't valid.
-	 */
-	static final String ERROR_MESSAGE_THUMBNAIL_SIZE_IS_NOT_VALID = "Not a valid image size";
-
-	/**
 	 * The name of the servlet init parameter for the request parameter.
 	 */
 	private static final String INIT_PARAMETER_IMG_REQUEST_PARAMETER = "image-request-parameter-name";
@@ -215,7 +194,7 @@ public class ThumbnailServlet extends HttpServlet {
 			if (logger.isDebugEnabled())
 				logger.debug("Accessed with no thumbnail name");
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST,
-					ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID);
+					Thumbnail.ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID);
 			return;
 		}
 
@@ -234,7 +213,7 @@ public class ThumbnailServlet extends HttpServlet {
 						logger.error("Couldn't create thumbnail", e.getCause());
 					resp.sendError(
 							HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-							ERROR_MESSAGE_THUMBNAIL_NOT_CREATED);
+							Thumbnail.ERROR_MESSAGE_THUMBNAIL_NOT_CREATED);
 					return;
 				}
 			}
@@ -248,7 +227,7 @@ public class ThumbnailServlet extends HttpServlet {
 			if (logger.isErrorEnabled())
 				logger.error("Couldn't create thumbnail", e);
 			resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					ERROR_MESSAGE_THUMBNAIL_NOT_CREATED);
+					Thumbnail.ERROR_MESSAGE_THUMBNAIL_NOT_CREATED);
 			return;
 		}
 

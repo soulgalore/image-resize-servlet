@@ -31,25 +31,46 @@ import com.google.common.base.Objects;
 class Thumbnail {
 
 	/**
+	 * Error message if the requested thumbnail original doesn't exist.
+	 */
+	static final String ERROR_MESSAGE_ORIGINAL_IMAGE_DO_NOT_EXIST = "Requested non existing original image";
+
+	/**
+	 * Error message if the requested thumbnail name isn't valid.
+	 */
+	static final String ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID = "Thumbnail name isn't valid";
+	/**
+	 * Error message if the requested thumbnail couldn't be created.
+	 * 
+	 */
+	static final String ERROR_MESSAGE_THUMBNAIL_NOT_CREATED = "Couldn't create thumbnail";
+
+	/**
+	 * Error message if the requested thumbnail size isn't valid.
+	 */
+	static final String ERROR_MESSAGE_THUMBNAIL_SIZE_IS_NOT_VALID = "Not a valid image size";
+	/**
 	 * The regexp for the thumbnail name.
 	 */
 	protected static final String MATCHING_NAME_REGEXP = ".+\\-[0-9]+x[0-9]+\\.(png|jpg|jpeg|gif)";
-
-	private static final int MASK = 255;
 	private static final int BYTE = 8;
-
-	private final String imageFileName;
-	private final String originalImageName;
-	private final String originalImageNameWithExtension;
-	private final String imageFileExtension;
-	private final String imageDimensions;
-	private final String generatedFilePath;
-	private final String originalBaseDir;
+	private static final int MASK = 255;
 	private final String destinationDir;
-	private final Pattern pattern = Pattern.compile(MATCHING_NAME_REGEXP);
+	private final String generatedFilePath;
+	private final String imageDimensions;
+	private final String imageFileExtension;
+	private final String imageFileName;
 	
 	private final Logger logger = LoggerFactory
 			.getLogger(Thumbnail.class);
+
+	private final String originalBaseDir;
+
+	private final String originalImageName;
+
+	private final String originalImageNameWithExtension;
+
+	private final Pattern pattern = Pattern.compile(MATCHING_NAME_REGEXP);
 
 
 	/**
@@ -63,7 +84,7 @@ class Thumbnail {
 
 		if (theFileName == null || !pattern.matcher(theFileName).matches())
 			throw new ThumbnailException(
-					ThumbnailServlet.ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID);
+					Thumbnail.ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID);
 
 		imageFileName = theFileName;
 		originalImageName = imageFileName.substring(0,
@@ -88,8 +109,53 @@ class Thumbnail {
 		}
 	}
 
-	String getOriginalBaseDir() {
-		return originalBaseDir;
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Thumbnail other = (Thumbnail) obj;
+		if (destinationDir == null) {
+			if (other.destinationDir != null)
+				return false;
+		} else if (!destinationDir.equals(other.destinationDir))
+			return false;
+		if (imageFileName == null) {
+			if (other.imageFileName != null)
+				return false;
+		} else if (!imageFileName.equals(other.imageFileName))
+			return false;
+		if (originalBaseDir == null) {
+			if (other.originalBaseDir != null)
+				return false;
+		} else if (!originalBaseDir.equals(other.originalBaseDir))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((destinationDir == null) ? 0 : destinationDir.hashCode());
+		result = prime * result
+				+ ((imageFileName == null) ? 0 : imageFileName.hashCode());
+		result = prime * result
+				+ ((originalBaseDir == null) ? 0 : originalBaseDir.hashCode());
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return Objects.toStringHelper(this).add("imageFileName", imageFileName)
+				.add("imageDimensions", imageDimensions)
+				.add("originalBaseDir", originalBaseDir)
+				.add("destinationDir", destinationDir).toString();
+
 	}
 
 	String getDestinationDir() {
@@ -116,6 +182,10 @@ class Thumbnail {
 
 	String getImageFileName() {
 		return imageFileName;
+	}
+
+	String getOriginalBaseDir() {
+		return originalBaseDir;
 	}
 
 	String getOriginalImageName() {
@@ -147,54 +217,5 @@ class Thumbnail {
 		path.append(File.separator);
 
 		return path.toString();
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((destinationDir == null) ? 0 : destinationDir.hashCode());
-		result = prime * result
-				+ ((imageFileName == null) ? 0 : imageFileName.hashCode());
-		result = prime * result
-				+ ((originalBaseDir == null) ? 0 : originalBaseDir.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		final Thumbnail other = (Thumbnail) obj;
-		if (destinationDir == null) {
-			if (other.destinationDir != null)
-				return false;
-		} else if (!destinationDir.equals(other.destinationDir))
-			return false;
-		if (imageFileName == null) {
-			if (other.imageFileName != null)
-				return false;
-		} else if (!imageFileName.equals(other.imageFileName))
-			return false;
-		if (originalBaseDir == null) {
-			if (other.originalBaseDir != null)
-				return false;
-		} else if (!originalBaseDir.equals(other.originalBaseDir))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return Objects.toStringHelper(this).add("imageFileName", imageFileName)
-				.add("imageDimensions", imageDimensions)
-				.add("originalBaseDir", originalBaseDir)
-				.add("destinationDir", destinationDir).toString();
-
 	}
 }

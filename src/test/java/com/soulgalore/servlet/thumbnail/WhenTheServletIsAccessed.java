@@ -80,7 +80,7 @@ public class WhenTheServletIsAccessed {
 					is(HttpServletResponse.SC_BAD_REQUEST));
 			assertThat(
 					e.getResponseMessage(),
-					is(ThumbnailServlet.ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID));
+					is(Thumbnail.ERROR_MESSAGE_THUMBNAIL_NAME_IS_NOT_VALID));
 		}
 	}
 
@@ -98,7 +98,7 @@ public class WhenTheServletIsAccessed {
 					is(HttpServletResponse.SC_BAD_REQUEST));
 			assertThat(
 					e.getResponseMessage(),
-					is(ThumbnailServlet.ERROR_MESSAGE_THUMBNAIL_SIZE_IS_NOT_VALID));
+					is(Thumbnail.ERROR_MESSAGE_THUMBNAIL_SIZE_IS_NOT_VALID));
 		}
 
 	}
@@ -118,7 +118,7 @@ public class WhenTheServletIsAccessed {
 					is(HttpServletResponse.SC_BAD_REQUEST));
 			assertThat(
 					e.getResponseMessage(),
-					is(ThumbnailServlet.ERROR_MESSAGE_ORIGINAL_IMAGE_DO_NOT_EXIST));
+					is(Thumbnail.ERROR_MESSAGE_ORIGINAL_IMAGE_DO_NOT_EXIST));
 		}
 
 	}

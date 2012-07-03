@@ -66,12 +66,12 @@ public class ThumbnailFactory {
 
 		if (!isSizeValid(thumbnail))
 			throw new ThumbnailException(
-					ThumbnailServlet.ERROR_MESSAGE_THUMBNAIL_SIZE_IS_NOT_VALID);
+					Thumbnail.ERROR_MESSAGE_THUMBNAIL_SIZE_IS_NOT_VALID);
 
 		// do the original image exist
 		if (!doTheOriginalImageExist(thumbnail))
 			throw new ThumbnailException(
-					ThumbnailServlet.ERROR_MESSAGE_ORIGINAL_IMAGE_DO_NOT_EXIST);
+					Thumbnail.ERROR_MESSAGE_ORIGINAL_IMAGE_DO_NOT_EXIST);
 		
 		return thumbnail;
 	}
