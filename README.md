@@ -1,17 +1,17 @@
 # Image resize servlet [![Build Status](https://secure.travis-ci.org/soulgalore/image-resize-servlet.png?branch=master)](http://travis-ci.org/soulgalore/image-resize-servlet)
-=======
+
 Resize an image using imagemagick (http://www.imagemagick.org/) or thumbnailator (http://code.google.com/p/thumbnailator/) from within a servlet. The servlet will resize an already existing original 
 image to one of the predefined desired sizes (or whatever size you want, depending on configuration).
 
 ## What you need
---------
+
 <ol>
 <li>Imagemagick needs to be installed (http://www.imagemagick.org/script/binary-releases.php or by homebrew if you use Mac OS X) and the user of the servlet engine needs to have imagemagick on the path. You need it for all tests to work, even if you will only run thumbnailator.</li>
 <li> Simple as that :)</li>
 </ol>
 
 ## How to make a test run in Eclipse
---------
+------
 <ol>
 <li>Checkout the project</li>
 <li>Make the project a Maven project ("Convert to Maven project")</li>
