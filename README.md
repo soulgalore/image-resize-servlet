@@ -52,6 +52,13 @@ If you want to run this in production, you need to think of a couple of things:
 <li>Configure your logging backend for slf4j.
 </ol>
 
+## License
+
+## TODO
+* Not tested on Windows ...
+
+## License
+
 Copyright 2012 Peter Hedenskog
 
 Licensed under the Apache License, Version 2.0 (the "License");
