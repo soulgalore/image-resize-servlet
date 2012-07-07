@@ -58,8 +58,8 @@ import com.google.common.cache.CacheBuilder;
  * if it exist, it will be returned.
  * <li>
  * <li>If the images don't exist, the thumbnail of the requested size will be
- * created. The creation is done by the calling thread but is concurrent safem
- * meaning only one thread can create the same thumbnail</li>
+ * created by the calling thread. The creation is thread safe and only one thread 
+ * can create the one & same thumbnail (but other threads can create others, at the same time).</li>
  * <li>The image is returned</li>
  * </ol>
  * 
@@ -79,7 +79,7 @@ import com.google.common.cache.CacheBuilder;
  * </p>
  * 
  * <p>
- * No cache header is added within the servlet.
+ * Note: No cache header is added within the servlet.
  * </p>
  * 
  * 
@@ -117,6 +117,9 @@ public class ThumbnailServlet extends HttpServlet {
 	 */
 	private static final int CACHE_MAX_SIZE = 10000;
 
+	/**
+	 * My logger.
+	 */
 	private final transient Logger logger = LoggerFactory
 			.getLogger(ThumbnailServlet.class);
 
@@ -204,8 +207,9 @@ public class ThumbnailServlet extends HttpServlet {
 			if (!doTheThumbnailExist(thumbnail)) {
 
 				try {
-					// used to make sure only one thread creates the actual
-					// thumbnail
+					// kind of a simple hack to make sure only 
+					// one thread creates the actual thumbnail,  
+					// think about the Memoizer
 					cache.get(thumbnail, new ImageMagickThumbnailCreator(
 							thumbnail));
 				} catch (ExecutionException e) {
