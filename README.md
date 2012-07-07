@@ -3,13 +3,14 @@
 Resize an image using imagemagick (http://www.imagemagick.org/) or thumbnailator (http://code.google.com/p/thumbnailator/) from within a servlet. The servlet will resize an already existing original 
 image to one of the predefined desired sizes (or whatever size you want, depending on configuration).
 
-# What you need
+## What you need
+
 <ol>
 <li>Imagemagick needs to be installed (http://www.imagemagick.org/script/binary-releases.php or by homebrew if you use Mac OS X) and the user of the servlet engine needs to have imagemagick on the path. You need it for all tests to work, even if you will only run thumbnailator.</li>
 <li> Simple as that :)</li>
 </ol>
 
-# How to make a test run in Eclipse
+## How to make a test run in Eclipse
 <ol>
 <li>Checkout the project</li>
 <li>Make the project a Maven project ("Convert to Maven project")</li>
@@ -17,8 +18,7 @@ image to one of the predefined desired sizes (or whatever size you want, dependi
 <li>Access http://localhost:8080/thumbs/test-460x360.png and if you see the image, it works.</li>
 </ol>
 
-# How to use it
-
+## How to use it
 <ol>
 <li>Setup the servlet in your web.xml (you can configure the request parameter name, original image folder, thumbnail base folder and a list of valid sizes of images)</li>
 
@@ -31,14 +31,14 @@ image to one of the predefined desired sizes (or whatever size you want, dependi
 <li>The images is returned with that size, resized from the file MY_ORIGINAL_IMAGE.png</li>
 </ol>
 
-# How it works
+## How it works
 The servlet will check if the image already exist in the requested size.  If the file exists, it is forwarded to the user. Else the servlet checks if the 
 original image exist (named MY_ORIGINAL_IMAGE.png) and that the requested thumbnail size is valid (you can configure valid size or say that all sizes are valid)
 . If the request is valid, a new thumbnail is resized and put in your configured thumbnail base dir + a generated folder path that is calculated from the original file name, so that files are spread within the file system (but all sizes for a specific file, are within the same folder). Then the new image is returned to the user. 
 
 The calling thread is the thread that creates the actual thumbnail and it is concurrent in the meaning only one thread can create the same thumbnail.
 
-# Extras
+## Extras
 Bundled with Tomcat, set it up using and inctructions of how to start: https://github.com/jsimone/webapp-runner 
 
 Also an expire filter is setup in the web.xml to set some cache headers (so make sure to empty your browser cache if you change images but keep the same name).
@@ -51,9 +51,6 @@ If you want to run this in production, you need to think of a couple of things:
 <li>Make sure you set correct cache headers and add a layer in front of your servlet runner (Nginx/Apache etc) that can cache the generated image. </li>
 <li>Configure your logging backend for slf4j.
 </ol>
-
-
-# License
 
 Copyright 2012 Peter Hedenskog
 
