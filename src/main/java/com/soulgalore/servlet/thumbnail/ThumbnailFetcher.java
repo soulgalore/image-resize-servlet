@@ -23,6 +23,9 @@ package com.soulgalore.servlet.thumbnail;
 import java.io.File;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Fetch a thumbnail object.
  *
@@ -45,6 +48,12 @@ public class ThumbnailFetcher {
 	 * can be created.
 	 */
 	private final Set<String> validSizes;
+	
+	/**
+	 * My logger.
+	 */
+	private final Logger logger = LoggerFactory
+			.getLogger(ThumbnailServlet.class);
 
 	ThumbnailFetcher(String theOriginalBaseDir, String theDestinationBaseDir,
 			Set<String> theValidSizes) {
@@ -88,6 +97,10 @@ public class ThumbnailFetcher {
 		final File originalFile = new File(thumbnail.getOriginalBaseDir()
 				+ File.separator
 				+ thumbnail.getOriginalImageNameWithExtension());
+		if (logger.isDebugEnabled())
+			logger.debug("Do the file {} exist {}",
+					originalFile.getAbsoluteFile(), originalFile.exists());
+		
 		return originalFile.exists();
 	}
 
