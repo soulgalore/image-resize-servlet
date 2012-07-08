@@ -132,7 +132,7 @@ public class ThumbnailServlet extends HttpServlet {
 	/**
 	 * The factory classes, used to create thumbnail objects.
 	 */
-	private transient ThumbnailFactory factory;
+	private transient ThumbnailFetcher factory;
 
 	/**
 	 * Directory for originals.
@@ -173,7 +173,7 @@ public class ThumbnailServlet extends HttpServlet {
 		thumbsDir = config.getInitParameter(INIT_PARAMETER_THUMB_WEB_DIR);
 		originalsDir = config.getInitParameter(INIT_PARAMETER_ORIGINAL_WEB_DIR);
 
-		factory = new ThumbnailFactory(getServletContext().getRealPath("/")
+		factory = new ThumbnailFetcher(getServletContext().getRealPath("/")
 				+ originalsDir, getServletContext()
 				.getRealPath("/" + thumbsDir), validSizes);
 
@@ -209,8 +209,8 @@ public class ThumbnailServlet extends HttpServlet {
 				try {
 					// kind of a simple hack to make sure only 
 					// one thread creates the actual thumbnail,  
-					// think about the Memoizer
-					cache.get(thumbnail, new ImageMagickThumbnailCreator(
+					// think the Memoizer
+					cache.get(thumbnail, new ImageMagickFileThumbnailCreator(
 							thumbnail));
 				} catch (ExecutionException e) {
 					if (logger.isErrorEnabled())
