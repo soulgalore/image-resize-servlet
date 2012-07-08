@@ -141,15 +141,15 @@ public class WhenAThumbnailIsCreated {
 
 		Set<String> validSizes = new HashSet<String>();
 		validSizes.add("120x94");
-		ThumbnailFetcher factory = new ThumbnailFetcher(originalDir, thumbsDir,
+		ThumbnailFetcher fetcher = new ThumbnailFetcher(originalDir, thumbsDir,
 				validSizes);
 		
 
 		Thumbnail validThumbNail = new Thumbnail("mySuperImage-120x94.png", originalDir, thumbsDir);
-		assertTrue(factory.isSizeValid(validThumbNail));
+		assertTrue(fetcher.isSizeValid(validThumbNail));
 
 		Thumbnail invalidThumbNail = new Thumbnail("mySuperImage-120x941.png", originalDir, thumbsDir);
-		assertFalse(factory.isSizeValid(invalidThumbNail));
+		assertFalse(fetcher.isSizeValid(invalidThumbNail));
 
 	}
 	
