@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Image resize servlet by soulgalore</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Image resize servlet</h1>
+        <p>Resize image servlet using imagemagick or thumbnailator.</p>
+
+        <p class="view"><a href="https://github.com/soulgalore/image-resize-servlet">View the Project on GitHub <small>soulgalore/image-resize-servlet</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/soulgalore/image-resize-servlet/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/soulgalore/image-resize-servlet/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/soulgalore/image-resize-servlet">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>Image resize servlet <a href="http://travis-ci.org/soulgalore/image-resize-servlet"><img src="https://secure.travis-ci.org/soulgalore/image-resize-servlet.png?branch=master" alt="Build Status"></a>
+</h1>
+
+<p>Resize an image using imagemagick (<a href="http://www.imagemagick.org/">http://www.imagemagick.org/</a>) or thumbnailator (<a href="http://code.google.com/p/thumbnailator/">http://code.google.com/p/thumbnailator/</a>) from within a servlet. The servlet will resize an already existing original 
+image to one of the predefined desired sizes (or whatever size you want, depending on configuration).</p>
+
+<h2>What you need</h2>
+
+<ol>
+<li>Imagemagick needs to be installed (http://www.imagemagick.org/script/binary-releases.php or by homebrew if you use Mac OS X) and the user of the servlet engine needs to have imagemagick on the path. You need it for all tests to work, even if you will only run thumbnailator.</li>
+<li> Simple as that :)</li>
+</ol><h2>How to make a test run in Eclipse</h2>
+
+<ol>
+<li>Checkout the project</li>
+<li>Make the project a Maven project ("Convert to Maven project")</li>
+<li>Start the Tomcat using https://github.com/jsimone/webapp-runner#create-a-launch-configuration</li>
+<li>Access http://localhost:8080/thumbs/test-460x360.png and if you see the image, it works.</li>
+</ol><h2>How to use it</h2>
+
+<ol>
+<li>Setup the servlet in your web.xml (you can configure the request parameter name, original image folder, thumbnail base folder and a list of valid sizes of images)</li>
+
+<li>Access the servlet with the your predefined request parameter with the value of the image you want.
+<code>
+/SERVLET/?img=MY_ORIGINAL_IMAGE-120x94.png
+</code>
+</li>
+
+<li>The images is returned with that size, resized from the file MY_ORIGINAL_IMAGE.png</li>
+</ol><h2>How it works</h2>
+
+<p>The servlet will check if the image already exist in the requested size.  If the file exists, it is forwarded to the user. Else the servlet checks if the 
+original image exist (named MY_ORIGINAL_IMAGE.png) and that the requested thumbnail size is valid (you can configure valid size or say that all sizes are valid)
+. If the request is valid, a new thumbnail is resized and put in your configured thumbnail base dir + a generated folder path that is calculated from the original file name, so that files are spread within the file system (but all sizes for a specific file, are within the same folder). Then the new image is returned to the user. </p>
+
+<p>The calling thread is the thread that creates the actual thumbnail and it is concurrent in the meaning only one thread can create the same thumbnail.</p>
+
+<p><img src="http://soulgalore.com/image-resize-servlet.png"></p>
+
+<h2>Extras</h2>
+
+<p>Bundled with Tomcat, set it up using and inctructions of how to start: <a href="https://github.com/jsimone/webapp-runner">https://github.com/jsimone/webapp-runner</a> </p>
+
+<p>Also an expire filter is setup in the web.xml to set some cache headers (so make sure to empty your browser cache if you change images but keep the same name).</p>
+
+<p>Tuckeys url rewrite filter is used to setup a friendly url.</p>
+
+<p>If you want to run this in production, you need to think of a couple of things:</p>
+
+<ol>
+<li>Change the original and thumbnail directories so they exists outside the webapp (you will probably want the images to live even if you redeploy :) ). If you use Tomcat, configure it by <i>allowLinking</i> to be able to symlink outside your webapp.</li>
+<li>Make sure you set correct cache headers and add a layer in front of your servlet runner (Nginx/Apache etc) that can cache the generated image. </li>
+<li>Configure your logging backend for slf4j.
+</li>
+</ol><h2>License</h2>
+
+<p>Copyright 2012 Peter Hedenskog</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at</p>
+
+<p><a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
+
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/soulgalore">soulgalore</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
