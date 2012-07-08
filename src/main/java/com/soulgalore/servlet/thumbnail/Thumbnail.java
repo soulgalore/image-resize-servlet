@@ -52,7 +52,8 @@ class Thumbnail {
 	/**
 	 * The regexp for the thumbnail name.
 	 */
-	protected static final String MATCHING_NAME_REGEXP = ".+\\-[0-9]+x[0-9]+\\.(png|jpg|jpeg|gif)";
+	static final String MATCHING_NAME_REGEXP = ".+\\-[0-9]+x[0-9]+\\.(png|jpg|jpeg|gif)";
+	
 	private static final int BYTE = 8;
 	private static final int MASK = 255;
 	private final String destinationDir;
@@ -103,8 +104,7 @@ class Thumbnail {
 		final File dir = new File(destinationDir);
 
 		if (!dir.exists()) {
-			if (!dir.mkdirs())
-			{
+			if (!dir.mkdirs()) {
 				logger.error("Couldn't create dir {}",
 						dir.getAbsolutePath());
 				throw new ThumbnailException(
