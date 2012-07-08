@@ -38,7 +38,7 @@ original image exist (named MY_ORIGINAL_IMAGE.png) and that the requested thumbn
 
 The calling thread is the thread that creates the actual thumbnail and it is concurrent in the meaning only one thread can create the same thumbnail.
 
-<img src="image-resize-servlet/doc/img/image-resize-servlet.png">
+<img src="http://soulgalore.com/image-resize-servlet.png">
 
 ## Extras
 Bundled with Tomcat, set it up using and inctructions of how to start: https://github.com/jsimone/webapp-runner 
