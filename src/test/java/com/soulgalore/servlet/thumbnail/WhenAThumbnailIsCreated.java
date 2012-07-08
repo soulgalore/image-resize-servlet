@@ -141,7 +141,7 @@ public class WhenAThumbnailIsCreated {
 
 		Set<String> validSizes = new HashSet<String>();
 		validSizes.add("120x94");
-		ThumbnailFactory factory = new ThumbnailFactory(originalDir, thumbsDir,
+		ThumbnailFetcher factory = new ThumbnailFetcher(originalDir, thumbsDir,
 				validSizes);
 		
 

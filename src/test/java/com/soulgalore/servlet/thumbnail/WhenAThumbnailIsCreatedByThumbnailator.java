@@ -37,7 +37,7 @@ public class WhenAThumbnailIsCreatedByThumbnailator {
 		String originalsDir = testPng.getPath();
 		String thumbName = "test-120x94.png";
 		Thumbnail thumb = new Thumbnail(thumbName, originalsDir, originalsDir);
-		ThumbnailatorThumbnailCreator creator = new ThumbnailatorThumbnailCreator(thumb);
+		ThumbnailatorFileThumbnailCreator creator = new ThumbnailatorFileThumbnailCreator(thumb);
 		File destFile = creator.call();
 		assertTrue("The thumbnail doesn't exist:" + destFile.getAbsolutePath(), destFile.exists());
 	}

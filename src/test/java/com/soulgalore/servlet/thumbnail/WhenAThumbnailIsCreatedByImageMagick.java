@@ -37,7 +37,7 @@ public class WhenAThumbnailIsCreatedByImageMagick {
 		String originalsDir = testPng.getPath();
 		String thumbName = "test-120x94.png";
 		Thumbnail thumb = new Thumbnail(thumbName, originalsDir, originalsDir);
-		ImageMagickThumbnailCreator creator = new ImageMagickThumbnailCreator(thumb);
+		ImageMagickFileThumbnailCreator creator = new ImageMagickFileThumbnailCreator(thumb);
 		File destFile = creator.call();
 		assertTrue("The thumbnail doesn't exist:" + destFile.getAbsolutePath(), destFile.exists());
 	}

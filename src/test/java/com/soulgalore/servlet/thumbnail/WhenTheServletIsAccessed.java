@@ -130,7 +130,7 @@ public class WhenTheServletIsAccessed {
 
 		Set<String> validSizes = new HashSet<String>();
 		validSizes.add("120x94");
-		ThumbnailFactory getter = new ThumbnailFactory(originalDir, thumbsDir,
+		ThumbnailFetcher getter = new ThumbnailFetcher(originalDir, thumbsDir,
 				validSizes);
 		Thumbnail thumbnail = new Thumbnail("test-120x94.png", originalDir, thumbsDir);
 		assertTrue("The orginal image should exist",
