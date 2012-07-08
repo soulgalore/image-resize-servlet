@@ -10,13 +10,15 @@ image to one of the predefined desired sizes (or whatever size you want, dependi
 <li> Simple as that :)</li>
 </ol>
 
-## How to make a test run in Eclipse
-<ol>
-<li>Checkout the project</li>
-<li>Make the project a Maven project ("Convert to Maven project")</li>
-<li>Start the Tomcat using https://github.com/jsimone/webapp-runner#create-a-launch-configuration</li>
-<li>Access http://localhost:8080/thumbs/test-460x360.png and if you see the image, it works.</li>
-</ol>
+## How it works
+
+<img src="http://soulgalore.github.com/image-resize-servlet/img/image-resize-servlet.png">
+
+The servlet will check if the image already exist in the requested size.  If the file exists, it is forwarded to the user. Else the servlet checks if the 
+original image exist (named MY_ORIGINAL_IMAGE.png) and that the requested thumbnail size is valid (you can configure valid size or say that all sizes are valid)
+. If the request is valid, a new thumbnail is resized and put in your configured thumbnail base dir + a generated folder path that is calculated from the original file name, so that files are spread within the file system (but all sizes for a specific file, are within the same folder). Then the new image is returned to the user. 
+
+The calling thread is the thread that creates the actual thumbnail and it is concurrent in the meaning only one thread can create the same thumbnail.
 
 ## How to use it
 <ol>
@@ -31,15 +33,13 @@ image to one of the predefined desired sizes (or whatever size you want, dependi
 <li>The images is returned with that size, resized from the file MY_ORIGINAL_IMAGE.png</li>
 </ol>
 
-## How it works
-
-<img src="http://soulgalore.github.com/image-resize-servlet/img/image-resize-servlet.png">
-
-The servlet will check if the image already exist in the requested size.  If the file exists, it is forwarded to the user. Else the servlet checks if the 
-original image exist (named MY_ORIGINAL_IMAGE.png) and that the requested thumbnail size is valid (you can configure valid size or say that all sizes are valid)
-. If the request is valid, a new thumbnail is resized and put in your configured thumbnail base dir + a generated folder path that is calculated from the original file name, so that files are spread within the file system (but all sizes for a specific file, are within the same folder). Then the new image is returned to the user. 
-
-The calling thread is the thread that creates the actual thumbnail and it is concurrent in the meaning only one thread can create the same thumbnail.
+## How to make a test run in Eclipse
+<ol>
+<li>Checkout the project</li>
+<li>Make the project a Maven project ("Convert to Maven project")</li>
+<li>Start the Tomcat using https://github.com/jsimone/webapp-runner#create-a-launch-configuration</li>
+<li>Access http://localhost:8080/thumbs/test-460x360.png and if you see the image, it works.</li>
+</ol>
 
 ## Extras
 Bundled with Tomcat, set it up using and inctructions of how to start: https://github.com/jsimone/webapp-runner 
