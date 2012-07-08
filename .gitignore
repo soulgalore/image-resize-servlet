@@ -6,6 +6,7 @@
 *.ear
 
 src/main/webapp/thumbnails/
+src/test/resources/webapp/thumbs/
 target
 
 # eclipse
