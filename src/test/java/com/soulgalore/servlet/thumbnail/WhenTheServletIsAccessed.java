@@ -39,6 +39,7 @@ import org.xml.sax.SAXException;
 import com.meterware.httpunit.GetMethodWebRequest;
 import com.meterware.httpunit.HttpException;
 import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletRunner;
 import com.meterware.servletunit.ServletUnitClient;
 import com.soulgalore.servlet.thumbnail.Thumbnail;
@@ -125,7 +126,7 @@ public class WhenTheServletIsAccessed {
 	
 	
 	@Test
-	public void theOriginalImageShouldExis()
+	public void theOriginalImageShouldExist()
 			throws IOException, ServletException, ThumbnailException {
 
 		Set<String> validSizes = new HashSet<String>();
@@ -138,18 +139,23 @@ public class WhenTheServletIsAccessed {
 
 	}
 
+	
 	/*
-	 * TODO need to setup the last forward in configuration
-	 * 
-	 * @Test public void rightParametersShouldWork() throws SAXException,
-	 * IOException { ServletUnitClient sc = sr.newClient(); WebRequest request =
-	 * new GetMethodWebRequest("http://localhost/thumbs");
-	 * request.setParameter("img", "test-120x94.png");
-	 * 
-	 * try { WebResponse wr = sc.getResponse(request);
-	 * assertThat(wr.getResponseCode(), is(HttpServletResponse.SC_OK)); } catch
-	 * (HttpException e) { fail("Right parameters should work:" +
-	 * e.getResponseCode() + " " + e.getMessage()); } }
-	 */
+	 * Need to setup right fowrard
+	@Test
+	public void rightParametersShouldWork() throws SAXException, IOException {
+		ServletUnitClient sc = sr.newClient();
+		WebRequest request = new GetMethodWebRequest("http://localhost/thumbs");
+		request.setParameter("img", "test-120x94.png");
+
+		try {
+			WebResponse wr = sc.getResponse(request);
+			assertThat(wr.getResponseCode(), is(HttpServletResponse.SC_OK));
+		} catch (HttpException e) {
+			fail("Right parameters should work:" + e.getResponseCode() + " "
+					+ e.getMessage());
+		}
+	}
+	*/
 
 }
