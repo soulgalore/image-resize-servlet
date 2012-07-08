@@ -179,7 +179,7 @@ public class ThumbnailServlet extends HttpServlet {
 
 		logger.info(getServletName()
 				+ " is configured with request parameter name:"
-				+ requestParameterName + " origiginalDir:" + originalsDir
+				+ requestParameterName + " originalsDir:" + originalsDir
 				+ " thumbDir:" + thumbsDir + " and valid sizes:"
 				+ (sizes == null ? "" : sizes));
 	}
