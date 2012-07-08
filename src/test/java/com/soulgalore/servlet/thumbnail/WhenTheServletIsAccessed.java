@@ -50,8 +50,8 @@ public class WhenTheServletIsAccessed {
 
 	private ServletRunner sr;
 
-	private final static String originalDir = "src/test/resources/webapp/originals";
-	private final static String thumbsDir = "src/test/resources/webapp/thumbs";
+	private final static String originalDirServlet = "/src/test/resources/webapp/originals";
+	private final static String thumbsDirServlet = "src/test/resources/webapp/thumbs";
 
 	@Before
 	public void setup() throws IOException, SAXException {
@@ -60,8 +60,8 @@ public class WhenTheServletIsAccessed {
 		sr = new ServletRunner(webXml);
 		Hashtable<String, String> ht = new Hashtable<String, String>();
 		ht.put("valid-sizes", "460x360,220x172,120x94,80x62,800x626");
-		ht.put("thumbs-dir", thumbsDir);
-		ht.put("originals-dir", originalDir);
+		ht.put("thumbs-dir", thumbsDirServlet);
+		ht.put("originals-dir", originalDirServlet);
 		ht.put("image-request-parameter-name", "img");
 
 		sr.registerServlet("thumbs", ThumbnailServlet.class.getName(), ht);
@@ -131,9 +131,12 @@ public class WhenTheServletIsAccessed {
 
 		Set<String> validSizes = new HashSet<String>();
 		validSizes.add("120x94");
-		ThumbnailFetcher getter = new ThumbnailFetcher(originalDir, thumbsDir,
-				validSizes);
-		Thumbnail thumbnail = new Thumbnail("test-120x94.png", originalDir, thumbsDir);
+		ThumbnailFetcher getter = new ThumbnailFetcher(
+				"src/test/resources/webapp/originals",
+				"src/test/resources/webapp/thumbs", validSizes);
+		Thumbnail thumbnail = new Thumbnail("test-120x94.png",
+				"src/test/resources/webapp/originals",
+				"src/test/resources/webapp/thumbs");
 		assertTrue("The orginal image should exist",
 				getter.doTheOriginalImageExist(thumbnail));
 
@@ -141,7 +144,7 @@ public class WhenTheServletIsAccessed {
 
 	
 	/*
-	 * Need to setup right fowrard
+	
 	@Test
 	public void rightParametersShouldWork() throws SAXException, IOException {
 		ServletUnitClient sc = sr.newClient();
