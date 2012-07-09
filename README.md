@@ -1,6 +1,6 @@
 # Image resize servlet [![Build Status](https://secure.travis-ci.org/soulgalore/image-resize-servlet.png?branch=master)](http://travis-ci.org/soulgalore/image-resize-servlet)
 
-Resize an image using imagemagick (http://www.imagemagick.org/) or thumbnailator (http://code.google.com/p/thumbnailator/) from within a servlet. The servlet will resize an already existing original 
+Resize an image using Imagemagick (http://www.imagemagick.org/) or Thumbnailator (http://code.google.com/p/thumbnailator/) from within a servlet. The servlet will resize an already existing original 
 image to one of the predefined desired sizes (or whatever size you want, depending on configuration).
 
 ## What you need
