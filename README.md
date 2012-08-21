@@ -51,7 +51,7 @@ Tuckeys url rewrite filter is used to setup a friendly url.
 If you want to run this in production, you need to think of a couple of things:
 <ol>
 <li>Change the original and thumbnail directories so they exists outside the webapp (you will probably want the images to live even if you redeploy :) ). If you use Tomcat, configure it by <i>allowLinking</i> to be able to symlink outside your webapp.</li>
-<li>Make sure you set correct cache headers and add a layer in front of your servlet runner (Nginx/Apache etc) that can cache the generated image. </li>
+<li>Make sure you set correct cache headers and add a layer in front of your servlet runner (Nginx/Apache etc) that can cache the generated image.</li>
 <li>Configure your logging backend for slf4j.
 </ol>
 
