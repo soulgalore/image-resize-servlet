@@ -57,7 +57,7 @@ If you want to run this in production, you need to think of a couple of things:
 
 ## License
 
-Copyright 2012 Peter Hedenskog
+Copyright 2013 Peter Hedenskog
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
